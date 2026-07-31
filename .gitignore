@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Xcode - user-specific
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+
+# Xcode - build products
+build/
+DerivedData/
+.build/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+# Keep Package.resolved so dependency versions are reproducible.
+
+# Fastlane / misc (not used yet, safe defaults)
+*.log
+
+# Claude Code - local settings and instructions
+.claude/
+CLAUDE.md
