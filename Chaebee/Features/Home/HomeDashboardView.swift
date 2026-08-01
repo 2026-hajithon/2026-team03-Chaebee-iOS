@@ -9,7 +9,7 @@ struct HomeDashboardView: View {
 
     init(
         repository: (any HomeDashboardRepository)? = nil,
-        timelineRepository: any PreparationTimelineRepository = FixturePreparationTimelineRepository()
+        timelineRepository: any PreparationTimelineRepository
     ) {
         let resolvedRepository = repository ?? FixtureHomeDashboardRepository()
         self.timelineRepository = timelineRepository
@@ -33,7 +33,7 @@ struct HomeDashboardView: View {
         .background(CBColor.gray1)
         .overlay {
             if pendingTripDeletion != nil {
-                Color.black.opacity(0.4)
+                Color.black.opacity(0.6)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                     .transition(.opacity)
@@ -235,7 +235,8 @@ struct HomeDashboardView: View {
 #Preview("Registered") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .registered)
+            repository: FixtureHomeDashboardRepository(state: .registered),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))
@@ -244,7 +245,8 @@ struct HomeDashboardView: View {
 #Preview("Empty") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .empty)
+            repository: FixtureHomeDashboardRepository(state: .empty),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))
@@ -253,7 +255,8 @@ struct HomeDashboardView: View {
 #Preview("Single Trip") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .singleTrip)
+            repository: FixtureHomeDashboardRepository(state: .singleTrip),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))

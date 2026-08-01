@@ -71,6 +71,7 @@ struct TimelinePhaseRow: View {
         .overlay {
             RoundedRectangle(cornerRadius: CBRadius.medium)
                 .stroke(phase.isCurrent ? CBColor.blue5 : CBColor.gray3, lineWidth: phase.isCurrent ? 2 : 1)
+                .allowsHitTesting(false)
         }
         .padding(.bottom, CBSpacing.large)
     }

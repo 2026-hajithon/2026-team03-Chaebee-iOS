@@ -12,9 +12,8 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
     }
 
     func updateChecklistItem(id: Int, isChecked: Bool) async throws {
-        let _: APIResponseDTO<EmptyResponseDTO?> = try await client.request(
-            TimelineEndpoint.updateChecklistItem(id: id, isChecked: isChecked),
-            as: APIResponseDTO<EmptyResponseDTO?>.self
+        try await client.request(
+            TimelineEndpoint.updateChecklistItem(id: id, isChecked: isChecked)
         )
     }
 
@@ -89,7 +88,7 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
 
     private func dayLabel(_ dDay: Int) -> String {
         if dDay == 0 { return "D-Day" }
-        return dDay < 0 ? "D\(dDay)" : "D+\(dDay)"
+        return "D-\(abs(dDay))"
     }
 
     private func date(from value: String) -> Date {

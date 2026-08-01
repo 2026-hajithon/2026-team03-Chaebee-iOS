@@ -5,8 +5,8 @@ struct TimelineHomeView: View {
     @StateObject private var viewModel: TimelineHomeViewModel
 
     init(
-        tripID: Int = 12,
-        repository: any PreparationTimelineRepository = FixturePreparationTimelineRepository()
+        tripID: Int,
+        repository: any PreparationTimelineRepository
     ) {
         _viewModel = StateObject(
             wrappedValue: TimelineHomeViewModel(
@@ -108,7 +108,7 @@ struct TimelineHomeView: View {
 
     private func dayLabel(_ dDay: Int) -> String {
         if dDay == 0 { return "D-Day" }
-        return dDay < 0 ? "D\(dDay)" : "D+\(dDay)"
+        return "D-\(abs(dDay))"
     }
 
     private var backButton: some View {
@@ -153,6 +153,7 @@ struct TimelineHomeView: View {
 #Preview("Singapore") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .singapore)
         )
     }
@@ -162,6 +163,7 @@ struct TimelineHomeView: View {
 #Preview("Los Angeles") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .losAngeles)
         )
     }
@@ -171,6 +173,7 @@ struct TimelineHomeView: View {
 #Preview("Taiwan") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .taiwan)
         )
     }
