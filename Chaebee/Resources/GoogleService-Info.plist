@@ -4,6 +4,8 @@
 <dict>
 	<key>CLIENT_ID</key>
 	<string>294165510110-nfs0dbq3eibc6l4k8vevt65tro5v7hak.apps.googleusercontent.com</string>
+	<key>SERVER_CLIENT_ID</key>
+	<string>294165510110-t7gcc0ujh091j42raosltn8alkonrhr8.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.294165510110-nfs0dbq3eibc6l4k8vevt65tro5v7hak</string>
 	<key>PLIST_VERSION</key>

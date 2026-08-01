@@ -10,8 +10,23 @@ struct OnboardingFlowView: View {
 
     @State private var step: Step = .welcome
     @State private var isAuthenticated = false
+    @StateObject private var authenticationViewModel: OnboardingAuthenticationViewModel
 
     let onComplete: (Bool) -> Void
+
+    init(
+        authenticationRepository: any AuthenticationRepository,
+        googleSignInService: any GoogleSignInServicing,
+        onComplete: @escaping (Bool) -> Void
+    ) {
+        _authenticationViewModel = StateObject(
+            wrappedValue: OnboardingAuthenticationViewModel(
+                repository: authenticationRepository,
+                googleSignInService: googleSignInService
+            )
+        )
+        self.onComplete = onComplete
+    }
 
     var body: some View {
         ZStack {
@@ -21,13 +36,26 @@ struct OnboardingFlowView: View {
             switch step {
             case .welcome:
                 WelcomeView(
-                    onLogin: {
-                        isAuthenticated = true
-                        moveToPassportSelection()
+                    isLoading: authenticationViewModel.isLoading,
+                    errorMessage: authenticationViewModel.errorMessage,
+                    onGoogleLogin: {
+                        Task {
+                            guard let session = await authenticationViewModel.signInWithGoogle() else {
+                                return
+                            }
+                            handleAuthentication(session)
+                        }
+                    },
+                    onAppleLogin: {
+                        authenticationViewModel.showAppleLoginUnavailable()
                     },
                     onContinueAsGuest: {
-                        isAuthenticated = false
-                        moveToPassportSelection()
+                        Task {
+                            guard let session = await authenticationViewModel.continueAsGuest() else {
+                                return
+                            }
+                            handleAuthentication(session)
+                        }
                     }
                 )
 
@@ -58,6 +86,11 @@ struct OnboardingFlowView: View {
         withAnimation(.easeInOut(duration: CBAnimation.standardDuration)) {
             step = .passportSelection
         }
+    }
+
+    private func handleAuthentication(_ session: AuthenticationSession) {
+        isAuthenticated = !session.isGuest
+        moveToPassportSelection()
     }
 }
 
@@ -140,6 +173,10 @@ struct OnboardingChoiceButton: View {
 }
 
 #Preview {
-    OnboardingFlowView(onComplete: { _ in })
+    OnboardingFlowView(
+        authenticationRepository: AppEnvironment.live().authenticationRepository,
+        googleSignInService: GoogleSignInService(),
+        onComplete: { _ in }
+    )
         .environment(\.locale, Locale(identifier: "ko"))
 }

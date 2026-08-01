@@ -1,9 +1,15 @@
 import SwiftUI
+import GoogleSignIn
 
 struct RootView: View {
     @AppStorage("chaebee.hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("chaebee.isLoggedIn") private var isLoggedIn = false
     @State private var hasResolvedLaunchState = false
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment = .live()) {
+        self.environment = environment
+    }
 
     var body: some View {
         Group {
@@ -11,10 +17,13 @@ struct RootView: View {
                 CBColor.gray1
                     .ignoresSafeArea()
             } else if hasCompletedOnboarding {
-                MainTabView()
+                MainTabView(onLogout: logout)
                     .transition(.opacity)
             } else {
-                OnboardingFlowView { authenticated in
+                OnboardingFlowView(
+                    authenticationRepository: environment.authenticationRepository,
+                    googleSignInService: GoogleSignInService()
+                ) { authenticated in
                     withAnimation(.easeInOut(duration: CBAnimation.standardDuration)) {
                         isLoggedIn = authenticated
                         hasCompletedOnboarding = true
@@ -23,15 +32,30 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .onAppear {
+        .task {
             guard !hasResolvedLaunchState else { return }
 
-            // Guest access is valid only for the current app session.
-            // A relaunch without an authenticated session starts from WelcomeView.
-            if !isLoggedIn {
+            let hasStoredSession = (try? await environment.authTokenStore.tokens()) != nil
+            if isLoggedIn, !hasStoredSession {
+                isLoggedIn = false
                 hasCompletedOnboarding = false
+            } else if !isLoggedIn {
+                // Guest access is valid only for the current app session.
+                hasCompletedOnboarding = false
+                try? await environment.authTokenStore.clear()
             }
             hasResolvedLaunchState = true
+        }
+    }
+
+    private func logout() {
+        Task {
+            try? await environment.authTokenStore.clear()
+            GIDSignIn.sharedInstance.signOut()
+            withAnimation(.easeInOut(duration: CBAnimation.standardDuration)) {
+                isLoggedIn = false
+                hasCompletedOnboarding = false
+            }
         }
     }
 }

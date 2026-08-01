@@ -3,6 +3,7 @@ import Foundation
 struct AppEnvironment {
     let apiClient: any APIClient
     let authTokenStore: KeychainAuthTokenStore
+    let authenticationRepository: any AuthenticationRepository
 
     static func live(
         configuration: APIConfiguration = .current
@@ -17,6 +18,14 @@ struct AppEnvironment {
             session: URLSession(configuration: sessionConfiguration),
             accessTokenProvider: { await tokenStore.accessToken() }
         )
-        return AppEnvironment(apiClient: client, authTokenStore: tokenStore)
+        let authenticationRepository = RemoteAuthenticationRepository(
+            apiClient: client,
+            tokenStore: tokenStore
+        )
+        return AppEnvironment(
+            apiClient: client,
+            authTokenStore: tokenStore,
+            authenticationRepository: authenticationRepository
+        )
     }
 }

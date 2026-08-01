@@ -2,6 +2,11 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selection: MainTab = .home
+    let onLogout: () -> Void
+
+    init(onLogout: @escaping () -> Void = {}) {
+        self.onLogout = onLogout
+    }
 
     var body: some View {
         ZStack {
@@ -16,7 +21,7 @@ struct MainTabView: View {
             .tabContentState(isSelected: selection == .writeDiscovery)
 
             NavigationStack {
-                ProfileSettingsView()
+                ProfileSettingsView(onLogout: onLogout)
             }
             .tabContentState(isSelected: selection == .more)
         }
