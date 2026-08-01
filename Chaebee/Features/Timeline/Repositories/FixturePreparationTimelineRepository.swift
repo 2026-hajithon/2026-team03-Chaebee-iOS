@@ -1,7 +1,7 @@
 import Foundation
 
 struct FixturePreparationTimelineRepository: PreparationTimelineRepository {
-    enum Destination: Sendable {
+    enum Destination: Equatable, Sendable {
         case losAngeles
         case newYork
         case singapore
