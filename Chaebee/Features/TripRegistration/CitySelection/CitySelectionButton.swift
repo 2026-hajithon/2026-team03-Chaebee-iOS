@@ -9,12 +9,12 @@ struct CitySelectionButton: View {
         case comingSoon
     }
 
-    private let name: LocalizedStringKey
+    private let name: LocalizedStringResource
     private let state: State
     private let action: () -> Void
 
     init(
-        name: LocalizedStringKey,
+        name: LocalizedStringResource,
         state: State,
         action: @escaping () -> Void
     ) {
@@ -33,7 +33,7 @@ struct CitySelectionButton: View {
 }
 
 private struct CitySelectionButtonContent: View {
-    let name: LocalizedStringKey
+    let name: LocalizedStringResource
     let state: CitySelectionButton.State
 
     private var foregroundColor: Color {
