@@ -36,12 +36,10 @@ struct AppEnvironment {
         let preparationTimelineRepository = RemotePreparationTimelineRepository(
             client: client
         )
-        let writeExperienceRepository = RemoteWriteExperienceHomeRepository(
-            apiClient: client
+        let writeExperienceRepository = FixtureWriteExperienceHomeRepository(
+            state: .populated
         )
-        let experienceLocationRepository = RemoteExperienceLocationRepository(
-            apiClient: client
-        )
+        let experienceLocationRepository = FixtureExperienceLocationRepository()
         return AppEnvironment(
             apiClient: client,
             authTokenStore: tokenStore,
