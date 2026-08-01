@@ -2,11 +2,11 @@ import SwiftUI
 
 /// A country label used across the write-experience flow.
 struct ExperienceCountryTag: View {
-    private let name: LocalizedStringKey
+    private let name: LocalizedStringResource
     private let flag: ImageResource
 
     init(
-        name: LocalizedStringKey,
+        name: LocalizedStringResource,
         flag: ImageResource
     ) {
         self.name = name
