@@ -32,6 +32,10 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
+        .environment(
+            \.tripRegistrationRepository,
+            environment.tripRegistrationRepository
+        )
         .task {
             guard !hasResolvedLaunchState else { return }
 

@@ -2285,6 +2285,23 @@
         }
       }
     },
+    "tripRegistration.registration.error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't register your trip. Please try again."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행을 등록하지 못했어요. 다시 시도해 주세요."
+          }
+        }
+      }
+    },
     "tripRegistration.step.final" : {
       "extractionState" : "manual",
       "localizations" : {

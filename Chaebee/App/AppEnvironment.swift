@@ -4,6 +4,7 @@ struct AppEnvironment {
     let apiClient: any APIClient
     let authTokenStore: KeychainAuthTokenStore
     let authenticationRepository: any AuthenticationRepository
+    let tripRegistrationRepository: any TripRegistrationRepository
 
     static func live(
         configuration: APIConfiguration = .current
@@ -22,10 +23,14 @@ struct AppEnvironment {
             apiClient: client,
             tokenStore: tokenStore
         )
+        let tripRegistrationRepository = RemoteTripRegistrationRepository(
+            apiClient: client
+        )
         return AppEnvironment(
             apiClient: client,
             authTokenStore: tokenStore,
-            authenticationRepository: authenticationRepository
+            authenticationRepository: authenticationRepository,
+            tripRegistrationRepository: tripRegistrationRepository
         )
     }
 }
