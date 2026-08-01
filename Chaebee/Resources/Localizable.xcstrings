@@ -1944,6 +1944,22 @@
         }
       }
     },
+    "writeExperience.registration.success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your discovery has been posted!"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "발견 등록이 완료되었어요!"
+          }
+        }
+      }
+    },
     "writeExperience.travelType.couple" : {
       "extractionState" : "stale",
       "localizations" : {

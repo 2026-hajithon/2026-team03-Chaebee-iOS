@@ -3,6 +3,8 @@ import SwiftUI
 struct WriteExperienceHomeView: View {
     @StateObject private var viewModel: WriteExperienceHomeViewModel
     @State private var showsWriteExperience = false
+    @State private var showsRegistrationToast = false
+    @State private var registrationToastTask: Task<Void, Never>?
 
     init(repository: (any WriteExperienceHomeRepository)? = nil) {
         let resolvedRepository = repository ?? FixtureWriteExperienceHomeRepository()
@@ -35,7 +37,17 @@ struct WriteExperienceHomeView: View {
                 WriteExperienceInputView { request in
                     viewModel.register(request)
                     showsWriteExperience = false
+                    showRegistrationToast()
                 }
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if showsRegistrationToast {
+                registrationSuccessToast
+                    .padding(.horizontal, CBSpacing.pageHorizontal)
+                    .padding(.bottom, CBSpacing.medium)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(1)
             }
         }
     }
@@ -137,6 +149,43 @@ struct WriteExperienceHomeView: View {
         .frame(maxWidth: .infinity)
         .padding(.top, 96)
         .padding(.bottom, CBSpacing.xLarge)
+    }
+
+    private var registrationSuccessToast: some View {
+        HStack(spacing: CBSpacing.medium) {
+            Image(systemName: "checkmark")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Color.white)
+                .frame(width: 24, height: 24)
+                .background(CBColor.blue5, in: Circle())
+
+            Text("writeExperience.registration.success")
+                .cbTypography(.body4)
+                .foregroundStyle(Color.white)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, CBSpacing.medium)
+        .frame(height: 56)
+        .background(CBColor.gray5)
+        .clipShape(RoundedRectangle(cornerRadius: CBRadius.medium))
+    }
+
+    private func showRegistrationToast() {
+        registrationToastTask?.cancel()
+
+        withAnimation(.easeOut(duration: CBAnimation.quickDuration)) {
+            showsRegistrationToast = true
+        }
+
+        registrationToastTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+
+            withAnimation(.easeOut(duration: CBAnimation.quickDuration)) {
+                showsRegistrationToast = false
+            }
+        }
     }
 
     private var errorView: some View {
