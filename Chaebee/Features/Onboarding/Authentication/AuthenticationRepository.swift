@@ -33,22 +33,21 @@ struct RemoteAuthenticationRepository: AuthenticationRepository {
         )
         let response = try await apiClient.request(
             endpoint,
-            as: APIResponseDTO<MemberLoginResponseDTO>.self
+            as: MemberLoginResponseDTO.self
         )
-        let payload = response.data
 
         try await tokenStore.save(
             AuthTokens(
-                accessToken: payload.accessToken,
-                refreshToken: payload.refreshToken
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken
             )
         )
 
         return AuthenticationSession(
-            memberID: payload.memberID,
-            name: payload.name,
-            isGuest: payload.isGuest,
-            isNewMember: payload.isNewMember
+            memberID: response.memberID,
+            name: response.name,
+            isGuest: response.isGuest,
+            isNewMember: response.isNewMember
         )
     }
 }
