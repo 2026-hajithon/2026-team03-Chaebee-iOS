@@ -21,6 +21,7 @@ struct RootView: View {
                     homeDashboardRepository: environment.homeDashboardRepository,
                     preparationTimelineRepository: environment.preparationTimelineRepository,
                     writeExperienceRepository: environment.writeExperienceRepository,
+                    myDiscoveriesRepository: environment.myDiscoveriesRepository,
                     experienceLocationRepository: environment.experienceLocationRepository,
                     onLogout: logout
                 )

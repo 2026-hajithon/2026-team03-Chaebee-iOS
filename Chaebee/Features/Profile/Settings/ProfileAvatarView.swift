@@ -3,6 +3,7 @@ import UIKit
 
 struct ProfileAvatarView: View {
     let imageData: Data?
+    var avatarColor: ExperienceAvatar = .orange
     var size: CGFloat = 56
 
     var body: some View {
@@ -12,7 +13,7 @@ struct ProfileAvatarView: View {
                     .resizable()
                     .scaledToFill()
             } else {
-                Image(.profileOrange)
+                Image(avatarColor.imageResource)
                     .resizable()
                     .scaledToFill()
             }

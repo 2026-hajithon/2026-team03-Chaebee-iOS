@@ -107,7 +107,7 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         return TravelerDiscovery(
             id: isCurrentUser ? -abs(id) : id,
             authorName: authorName,
-            authorAvatar: avatar(for: id),
+            authorAvatar: avatar(for: authorName),
             createdAt: Self.date(from: createdAt),
             content: content,
             country: country,
@@ -115,9 +115,12 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         )
     }
 
-    private func avatar(for id: Int) -> ExperienceAvatar {
+    private func avatar(for authorName: String) -> ExperienceAvatar {
+        let stableHash = authorName.utf8.reduce(UInt64(5_381)) { hash, byte in
+            ((hash << 5) &+ hash) &+ UInt64(byte)
+        }
         let avatars = ExperienceAvatar.allCases
-        return avatars[abs(id) % avatars.count]
+        return avatars[Int(stableHash % UInt64(avatars.count))]
     }
 
     private static func date(from value: String) -> Date {
@@ -127,12 +130,6 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
             return date
         }
         return (try? Date.ISO8601FormatStyle().parse(value)) ?? .now
-    }
-}
-
-private extension ExperienceAvatar {
-    static var allCases: [ExperienceAvatar] {
-        [.blue, .green, .indigo, .orange, .red, .yellow]
     }
 }
 

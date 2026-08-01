@@ -9,13 +9,16 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
 
     private var discoveries: [TravelerDiscovery]
     private let localStore: LocalDiscoveryStoring
+    private let profileRepository: ProfileRepository
 
     init(
         state: State = .empty,
-        localStore: LocalDiscoveryStoring? = nil
+        localStore: LocalDiscoveryStoring? = nil,
+        profileRepository: ProfileRepository? = nil
     ) {
         let resolvedStore = localStore ?? UserDefaultsLocalDiscoveryStore()
         self.localStore = resolvedStore
+        self.profileRepository = profileRepository ?? LocalProfileRepository()
 
         discoveries = state == .populated
             ? resolvedStore.fetchDiscoveries()
@@ -36,7 +39,7 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
             return TravelerDiscovery(
                 id: localStore.nextDiscoveryID(),
                 authorName: String(localized: "writeExperience.feed.currentUser"),
-                authorAvatar: .blue,
+                authorAvatar: profileRepository.fetchProfile().avatarColor,
                 createdAt: createdAt,
                 content: discovery.content,
                 country: request.country,

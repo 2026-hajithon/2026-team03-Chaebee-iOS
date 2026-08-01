@@ -5,6 +5,7 @@ struct MainTabView: View {
     let homeDashboardRepository: any HomeDashboardRepository
     let preparationTimelineRepository: any PreparationTimelineRepository
     let writeExperienceRepository: any WriteExperienceHomeRepository
+    let myDiscoveriesRepository: any WriteExperienceHomeRepository
     let experienceLocationRepository: any ExperienceLocationRepository
     let onLogout: () -> Void
 
@@ -12,12 +13,14 @@ struct MainTabView: View {
         homeDashboardRepository: any HomeDashboardRepository,
         preparationTimelineRepository: any PreparationTimelineRepository,
         writeExperienceRepository: any WriteExperienceHomeRepository,
+        myDiscoveriesRepository: (any WriteExperienceHomeRepository)? = nil,
         experienceLocationRepository: any ExperienceLocationRepository,
         onLogout: @escaping () -> Void = {}
     ) {
         self.homeDashboardRepository = homeDashboardRepository
         self.preparationTimelineRepository = preparationTimelineRepository
         self.writeExperienceRepository = writeExperienceRepository
+        self.myDiscoveriesRepository = myDiscoveriesRepository ?? writeExperienceRepository
         self.experienceLocationRepository = experienceLocationRepository
         self.onLogout = onLogout
     }
@@ -42,7 +45,7 @@ struct MainTabView: View {
 
             NavigationStack {
                 ProfileSettingsView(
-                    discoveryRepository: writeExperienceRepository,
+                    discoveryRepository: myDiscoveriesRepository,
                     onLogout: onLogout
                 )
             }

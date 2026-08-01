@@ -102,7 +102,11 @@ struct ProfileSettingsView: View {
                 Button {
                     isPhotoActionsPresented = true
                 } label: {
-                    ProfileAvatarView(imageData: viewModel.profile.avatarData, size: 44)
+                    ProfileAvatarView(
+                        imageData: viewModel.profile.avatarData,
+                        avatarColor: viewModel.profile.avatarColor,
+                        size: 44
+                    )
                 }
                 .buttonStyle(.plain)
 

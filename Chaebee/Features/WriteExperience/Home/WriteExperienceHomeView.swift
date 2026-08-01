@@ -78,7 +78,8 @@ struct WriteExperienceHomeView: View {
                         ForEach(viewModel.discoveries) { discovery in
                             TravelerDiscoveryCard(
                                 discovery: discovery,
-                                avatarData: viewModel.avatarData(for: discovery)
+                                avatarData: viewModel.avatarData(for: discovery),
+                                avatarColor: viewModel.avatarColor(for: discovery)
                             )
                         }
                     }

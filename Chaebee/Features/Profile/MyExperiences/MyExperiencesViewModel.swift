@@ -5,6 +5,7 @@ import Foundation
 final class MyExperiencesViewModel: ObservableObject {
     @Published private(set) var discoveries: [TravelerDiscovery] = []
     @Published private(set) var avatarData: Data?
+    @Published private(set) var avatarColor: ExperienceAvatar = .orange
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
 
@@ -23,7 +24,9 @@ final class MyExperiencesViewModel: ObservableObject {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
-        avatarData = profileRepository.fetchProfile().avatarData
+        let profile = profileRepository.fetchProfile()
+        avatarData = profile.avatarData
+        avatarColor = profile.avatarColor
 
         do {
             discoveries = try await repository.fetchMyDiscoveries()

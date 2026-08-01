@@ -44,7 +44,8 @@ struct MyExperiencesView: View {
                 ForEach(viewModel.discoveries) { discovery in
                     TravelerDiscoveryCard(
                         discovery: discovery,
-                        avatarData: viewModel.avatarData
+                        avatarData: viewModel.avatarData,
+                        avatarColor: viewModel.avatarColor
                     )
                 }
             }

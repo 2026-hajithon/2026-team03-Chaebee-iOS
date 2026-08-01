@@ -88,6 +88,7 @@ struct ProfileEditView: View {
             ZStack(alignment: .bottomTrailing) {
                 ProfileAvatarView(
                     imageData: viewModel.profile.avatarData,
+                    avatarColor: viewModel.profile.avatarColor,
                     size: 96
                 )
 

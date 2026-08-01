@@ -3,6 +3,7 @@ import SwiftUI
 struct TravelerDiscoveryCard: View {
     let discovery: TravelerDiscovery
     var avatarData: Data?
+    var avatarColor: ExperienceAvatar?
 
     var body: some View {
         VStack(alignment: .leading, spacing: CBSpacing.medium) {
@@ -55,7 +56,7 @@ struct TravelerDiscoveryCard: View {
                 .frame(width: 36, height: 36)
                 .clipShape(Circle())
         } else {
-            Image(discovery.authorAvatar.imageResource)
+            Image((avatarColor ?? discovery.authorAvatar).imageResource)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 36, height: 36)

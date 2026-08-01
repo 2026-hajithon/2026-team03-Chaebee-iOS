@@ -8,6 +8,7 @@ struct AppEnvironment {
     let homeDashboardRepository: any HomeDashboardRepository
     let preparationTimelineRepository: any PreparationTimelineRepository
     let writeExperienceRepository: any WriteExperienceHomeRepository
+    let myDiscoveriesRepository: any WriteExperienceHomeRepository
     let experienceLocationRepository: any ExperienceLocationRepository
 
     static func live(
@@ -39,6 +40,10 @@ struct AppEnvironment {
         let writeExperienceRepository = FixtureWriteExperienceHomeRepository(
             state: .populated
         )
+        let myDiscoveriesRepository = AuthorSyncedWriteExperienceHomeRepository(
+            localRepository: writeExperienceRepository,
+            apiClient: client
+        )
         let experienceLocationRepository = FixtureExperienceLocationRepository()
         return AppEnvironment(
             apiClient: client,
@@ -48,6 +53,7 @@ struct AppEnvironment {
             homeDashboardRepository: homeDashboardRepository,
             preparationTimelineRepository: preparationTimelineRepository,
             writeExperienceRepository: writeExperienceRepository,
+            myDiscoveriesRepository: myDiscoveriesRepository,
             experienceLocationRepository: experienceLocationRepository
         )
     }
