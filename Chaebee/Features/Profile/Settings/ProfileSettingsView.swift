@@ -136,6 +136,12 @@ struct ProfileSettingsView: View {
                 MyExperiencesView()
             } label: {
                 settingsRow("profile.registeredDiscoveries")
+                    .clipShape(
+                        RoundedRectangle(
+                            cornerRadius: CBRadius.large,
+                            style: .continuous
+                        )
+                    )
             }
             .buttonStyle(.plain)
         }

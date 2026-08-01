@@ -8,6 +8,7 @@ struct ProfileEditView: View {
     @ObservedObject private var viewModel: ProfileSettingsViewModel
 
     @State private var nickname: String
+    @State private var hasEditedNickname = false
     @State private var isPhotoActionsPresented = false
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isCameraPresented = false
@@ -38,6 +39,8 @@ struct ProfileEditView: View {
                     .padding(.horizontal, CBSpacing.medium)
                     .padding(.bottom, CBSpacing.medium)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .allowsHitTesting(false)
+                    .zIndex(5)
             }
 
             if isPhotoActionsPresented {
@@ -55,6 +58,14 @@ struct ProfileEditView: View {
         .onChange(of: selectedPhoto) { _, item in
             guard let item else { return }
             Task { await loadSelectedPhoto(item) }
+        }
+        .onChange(of: nickname) { _, newValue in
+            if newValue.count > 10 {
+                nickname = String(newValue.prefix(10))
+                return
+            }
+
+            hasEditedNickname = newValue != viewModel.profile.nickname
         }
         .fullScreenCover(isPresented: $isCameraPresented) {
             CameraImagePicker { image in
@@ -158,11 +169,10 @@ struct ProfileEditView: View {
 
     private var validationToast: some View {
         HStack(spacing: CBSpacing.medium) {
-            Image(systemName: "exclamationmark")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(CBColor.gray8)
-                .frame(width: 22, height: 22)
-                .background(CBColor.yellow, in: RoundedRectangle(cornerRadius: 5))
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(CBColor.yellow)
+                .frame(width: 24, height: 24)
 
             if let validationMessage {
                 Text(validationMessage)
@@ -197,7 +207,11 @@ struct ProfileEditView: View {
     }
 
     private var validationMessage: LocalizedStringKey? {
-        guard !nickname.isEmpty, !isValidNickname else { return nil }
+        guard hasEditedNickname, !isValidNickname else { return nil }
+
+        // Korean keyboards expose a single consonant or vowel while the user
+        // is still composing a syllable. Avoid showing an error mid-composition.
+        guard trimmedNickname.count >= 2 else { return nil }
 
         if !hasValidLength {
             return "profile.edit.nickname.lengthError"
