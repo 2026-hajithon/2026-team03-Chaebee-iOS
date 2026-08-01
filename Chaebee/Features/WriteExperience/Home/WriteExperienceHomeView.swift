@@ -48,15 +48,19 @@ struct WriteExperienceHomeView: View {
                 registrationCard
                     .padding(.top, CBSpacing.large)
 
-                feedHeader
-                    .padding(.top, CBSpacing.xLarge)
+                if viewModel.discoveries.isEmpty {
+                    emptyFeedView
+                } else {
+                    feedHeader
+                        .padding(.top, CBSpacing.xLarge)
 
-                LazyVStack(spacing: CBSpacing.medium) {
-                    ForEach(viewModel.discoveries) { discovery in
-                        TravelerDiscoveryCard(discovery: discovery)
+                    LazyVStack(spacing: CBSpacing.medium) {
+                        ForEach(viewModel.discoveries) { discovery in
+                            TravelerDiscoveryCard(discovery: discovery)
+                        }
                     }
+                    .padding(.top, CBSpacing.medium)
                 }
-                .padding(.top, CBSpacing.medium)
             }
             .padding(.horizontal, CBSpacing.pageHorizontal)
             .padding(.top, CBSpacing.medium)
@@ -116,6 +120,25 @@ struct WriteExperienceHomeView: View {
         }
     }
 
+    private var emptyFeedView: some View {
+        VStack(spacing: CBSpacing.large) {
+            Image(.emptyDiscovery)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 95)
+                .accessibilityHidden(true)
+
+            Text("writeExperience.home.empty.message")
+                .cbTypography(.head2)
+                .foregroundStyle(CBColor.gray4)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 96)
+        .padding(.bottom, CBSpacing.xLarge)
+    }
+
     private var errorView: some View {
         VStack(spacing: CBSpacing.medium) {
             Text("writeExperience.home.error.title")
@@ -137,6 +160,15 @@ struct WriteExperienceHomeView: View {
 #Preview {
     NavigationStack {
         WriteExperienceHomeView()
+    }
+    .environment(\.locale, Locale(identifier: "ko"))
+}
+
+#Preview("Empty") {
+    NavigationStack {
+        WriteExperienceHomeView(
+            repository: FixtureWriteExperienceHomeRepository(state: .empty)
+        )
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }

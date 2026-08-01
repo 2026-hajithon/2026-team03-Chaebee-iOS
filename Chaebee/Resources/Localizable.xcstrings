@@ -1675,6 +1675,22 @@
         }
       }
     },
+    "writeExperience.home.empty.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share your first discovery\nand help another traveler"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 번째 발견을 남겨\n다른 여행자에게 도움을 주세요"
+          }
+        }
+      }
+    },
     "writeExperience.home.error.retry" : {
       "extractionState" : "manual",
       "localizations" : {

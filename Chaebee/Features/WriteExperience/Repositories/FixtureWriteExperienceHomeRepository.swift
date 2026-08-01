@@ -1,9 +1,22 @@
 import Foundation
 
 struct FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
+    enum State: Equatable {
+        case populated
+        case empty
+    }
+
+    private let state: State
+
+    init(state: State = .populated) {
+        self.state = state
+    }
+
     func fetchDiscoveries(
         sort: ExperienceFeedSort
     ) async throws -> [TravelerDiscovery] {
+        guard state == .populated else { return [] }
+
         let now = Date.now
 
         return [
