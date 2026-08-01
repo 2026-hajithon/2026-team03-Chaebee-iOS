@@ -11,7 +11,7 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
     private let localStore: LocalDiscoveryStoring
 
     init(
-        state: State = .populated,
+        state: State = .empty,
         localStore: LocalDiscoveryStoring? = nil
     ) {
         let resolvedStore = localStore ?? UserDefaultsLocalDiscoveryStore()

@@ -108,9 +108,7 @@ struct HomeDashboardView: View {
                         .padding(.top, CBSpacing.large)
                 }
 
-                if !dashboard.editorDiscoveries.isEmpty {
-                    discoverySection(dashboard.editorDiscoveries)
-                }
+                discoverySection(dashboard.editorDiscoveries)
             }
             .padding(.horizontal, CBSpacing.pageHorizontal)
             .padding(.top, CBSpacing.medium)

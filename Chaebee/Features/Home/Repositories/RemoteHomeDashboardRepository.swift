@@ -17,14 +17,14 @@ struct RemoteHomeDashboardRepository: HomeDashboardRepository {
 
         return HomeDashboard(
             trips: response.data.map(makeTripSummary),
-            editorDiscoveries: []
+            editorDiscoveries: FixtureHomeDashboardRepository.discoveryFixtures
         )
     }
 
     private var emptyDashboard: HomeDashboard {
         HomeDashboard(
             trips: [],
-            editorDiscoveries: []
+            editorDiscoveries: FixtureHomeDashboardRepository.discoveryFixtures
         )
     }
 

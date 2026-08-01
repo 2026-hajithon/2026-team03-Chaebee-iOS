@@ -8,14 +8,13 @@ struct WriteExperienceHomeView: View {
     private let locationRepository: any ExperienceLocationRepository
 
     init(
-        repository: (any WriteExperienceHomeRepository)? = nil,
-        locationRepository: (any ExperienceLocationRepository)? = nil
+        repository: any WriteExperienceHomeRepository,
+        locationRepository: any ExperienceLocationRepository
     ) {
-        let resolvedRepository = repository ?? FixtureWriteExperienceHomeRepository()
-        self.locationRepository = locationRepository ?? FixtureExperienceLocationRepository()
+        self.locationRepository = locationRepository
         _viewModel = StateObject(
             wrappedValue: WriteExperienceHomeViewModel(
-                repository: resolvedRepository
+                repository: repository
             )
         )
     }
@@ -220,7 +219,10 @@ struct WriteExperienceHomeView: View {
 
 #Preview {
     NavigationStack {
-        WriteExperienceHomeView()
+        WriteExperienceHomeView(
+            repository: FixtureWriteExperienceHomeRepository(),
+            locationRepository: FixtureExperienceLocationRepository()
+        )
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }
@@ -228,7 +230,8 @@ struct WriteExperienceHomeView: View {
 #Preview("Empty") {
     NavigationStack {
         WriteExperienceHomeView(
-            repository: FixtureWriteExperienceHomeRepository(state: .empty)
+            repository: FixtureWriteExperienceHomeRepository(state: .empty),
+            locationRepository: FixtureExperienceLocationRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))
