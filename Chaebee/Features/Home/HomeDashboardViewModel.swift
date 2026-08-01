@@ -32,6 +32,10 @@ final class HomeDashboardViewModel: ObservableObject {
         await load()
     }
 
+    func dismissError() {
+        errorMessage = nil
+    }
+
     func deleteTrip(id: Int) async {
         guard var updatedDashboard = dashboard else { return }
         let previousDashboard = updatedDashboard

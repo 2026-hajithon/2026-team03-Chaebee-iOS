@@ -5,11 +5,14 @@ struct HomeDashboardView: View {
     @State private var isEditingTrips = false
     @State private var pendingTripDeletion: HomeTripSummary?
     @State private var showsTripRegistration = false
+    private let timelineRepository: any PreparationTimelineRepository
 
     init(
-        repository: (any HomeDashboardRepository)? = nil
+        repository: (any HomeDashboardRepository)? = nil,
+        timelineRepository: any PreparationTimelineRepository = FixturePreparationTimelineRepository()
     ) {
         let resolvedRepository = repository ?? FixtureHomeDashboardRepository()
+        self.timelineRepository = timelineRepository
         _viewModel = StateObject(
             wrappedValue: HomeDashboardViewModel(repository: resolvedRepository)
         )
@@ -28,11 +31,25 @@ struct HomeDashboardView: View {
             }
         }
         .background(CBColor.gray1)
+        .overlay {
+            if pendingTripDeletion != nil {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
+        .animation(
+            .easeInOut(duration: CBAnimation.quickDuration),
+            value: pendingTripDeletion != nil
+        )
         .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
         }
-        .fullScreenCover(isPresented: $showsTripRegistration) {
+        .fullScreenCover(isPresented: $showsTripRegistration, onDismiss: {
+            Task { await viewModel.retry() }
+        }) {
             NavigationStack {
                 TripRegistrationFlowView()
             }
@@ -61,6 +78,19 @@ struct HomeDashboardView: View {
             }
         } message: {
             Text("home.deleteTrip.message")
+        }
+        .alert(
+            "home.deleteTrip.error.title",
+            isPresented: Binding(
+                get: { viewModel.dashboard != nil && viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.dismissError() } }
+            )
+        ) {
+            Button("common.confirm") {
+                viewModel.dismissError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 
@@ -163,9 +193,7 @@ struct HomeDashboardView: View {
             NavigationLink {
                 TimelineHomeView(
                     tripID: trip.id,
-                    repository: FixturePreparationTimelineRepository(
-                        destination: trip.timelineDestination
-                    )
+                    repository: timelineRepository
                 )
             } label: {
                 HomeTripCard(trip: trip, layout: layout)

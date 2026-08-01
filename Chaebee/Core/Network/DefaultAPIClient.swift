@@ -22,6 +22,9 @@ struct DefaultAPIClient: APIClient {
         as type: Response.Type
     ) async throws -> Response {
         let request = try await makeRequest(for: endpoint)
+#if DEBUG
+        logRequest(request, endpoint: endpoint)
+#endif
         let data: Data
         let response: URLResponse
 
@@ -34,6 +37,9 @@ struct DefaultAPIClient: APIClient {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
+#if DEBUG
+        logResponse(httpResponse, data: data, endpoint: endpoint)
+#endif
         guard 200..<300 ~= httpResponse.statusCode else {
             if let payload = try? makeJSONDecoder().decode(ServerErrorResponse.self, from: data) {
                 throw APIError.server(
@@ -95,6 +101,70 @@ struct DefaultAPIClient: APIClient {
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }
+
+#if DEBUG
+    private func logRequest(
+        _ request: URLRequest,
+        endpoint: any Endpoint
+    ) {
+        let authorizationState = request.value(
+            forHTTPHeaderField: "Authorization"
+        ) == nil ? "missing" : "attached"
+
+        print(
+            "[Network] \(endpoint.method.rawValue) \(endpoint.path) "
+                + "authorization=\(authorizationState)"
+        )
+    }
+
+    private func logResponse(
+        _ response: HTTPURLResponse,
+        data: Data,
+        endpoint: any Endpoint
+    ) {
+        print(
+            "[Network] \(endpoint.method.rawValue) \(endpoint.path) "
+                + "status=\(response.statusCode) bytes=\(data.count)"
+        )
+
+        guard endpoint.path.hasPrefix("/trips") || !(200..<300 ~= response.statusCode) else {
+            return
+        }
+        guard
+            !data.isEmpty,
+            let json = try? JSONSerialization.jsonObject(with: data),
+            let redactedData = try? JSONSerialization.data(
+                withJSONObject: redactSensitiveValues(in: json),
+                options: [.prettyPrinted, .sortedKeys]
+            ),
+            let text = String(data: redactedData, encoding: .utf8)
+        else {
+            print("[Network] response body is not JSON")
+            return
+        }
+
+        print("[Network] response:\n\(text)")
+    }
+
+    private func redactSensitiveValues(in value: Any) -> Any {
+        if let dictionary = value as? [String: Any] {
+            return dictionary.reduce(into: [String: Any]()) { result, item in
+                let normalizedKey = item.key.lowercased()
+                if normalizedKey.contains("token") || normalizedKey == "authorization" {
+                    result[item.key] = "<redacted>"
+                } else {
+                    result[item.key] = redactSensitiveValues(in: item.value)
+                }
+            }
+        }
+
+        if let array = value as? [Any] {
+            return array.map(redactSensitiveValues)
+        }
+
+        return value
+    }
+#endif
 }
 
 private struct ServerErrorResponse: Decodable {

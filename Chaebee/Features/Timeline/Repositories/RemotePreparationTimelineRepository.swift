@@ -1,29 +1,14 @@
 import Foundation
 
-struct TimelinePresentationContext: Sendable {
-    let destinationName: String
-    let countryCode: String
-    let dDay: Int
-    let departureDate: Date
-}
-
 struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
     let client: any APIClient
-    let context: TimelinePresentationContext
 
     func fetchTimeline(tripID: Int) async throws -> PreparationTimeline {
-        let timelineEnvelope: APIResponseDTO<TimelineResponseDTO> = try await client.request(
+        let response: APIResponseDTO<TimelineResponseDTO> = try await client.request(
             TimelineEndpoint.timeline(tripID: tripID),
             as: APIResponseDTO<TimelineResponseDTO>.self
         )
-        let essentialInfoEnvelope: APIResponseDTO<EssentialInfoResponseDTO> = try await client.request(
-            TimelineEndpoint.essentialInfo(countryCode: context.countryCode),
-            as: APIResponseDTO<EssentialInfoResponseDTO>.self
-        )
-        return map(
-            timeline: timelineEnvelope.data,
-            essentialInfo: essentialInfoEnvelope.data
-        )
+        return map(response.data, tripID: tripID)
     }
 
     func updateChecklistItem(id: Int, isChecked: Bool) async throws {
@@ -34,25 +19,26 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
     }
 
     private func map(
-        timeline: TimelineResponseDTO,
-        essentialInfo: EssentialInfoResponseDTO
+        _ response: TimelineResponseDTO,
+        tripID: Int
     ) -> PreparationTimeline {
-        let phases = timeline.phases.enumerated().map { index, phase in
+        let phases = response.timeline.enumerated().map { phaseIndex, phase in
             TimelinePhase(
-                id: "\(phase.phaseLabel)-\(index)",
-                label: phase.phaseLabel,
-                date: date(for: phase.phaseLabel),
-                isCurrent: index == 0,
-                discoveries: phase.subDiscoveries.map {
+                id: "\(phase.dDay)-\(phase.date)-\(phaseIndex)",
+                label: dayLabel(phase.dDay),
+                date: date(from: phase.date),
+                isCurrent: phase.dDay == response.tripInfo.dDay,
+                discoveries: phase.discoveries.enumerated().map { discoveryIndex, discovery in
                     TimelineDiscovery(
-                        id: $0.subDiscoveryID,
-                        tag: $0.tag,
-                        content: $0.content
+                        id: phaseIndex * 10_000 + discoveryIndex,
+                        tag: discovery.tag,
+                        title: discovery.title,
+                        content: discovery.content
                     )
                 },
-                checklistItems: phase.checklistItems.map {
+                checklistItems: phase.checklists.map {
                     TimelineChecklistItem(
-                        id: $0.checklistItemID,
+                        id: $0.checklistID,
                         tag: $0.tag,
                         title: $0.title,
                         isChecked: $0.isChecked,
@@ -62,21 +48,23 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
                 }
             )
         }
-        let highlightedItem = timeline.phases
-            .flatMap(\.checklistItems)
+        let highlightedItem = response.timeline
+            .flatMap(\.checklists)
             .first(where: { !$0.isChecked })
-            ?? timeline.phases.flatMap(\.checklistItems).first
-
-        let progressTotal = max(0, timeline.progress.total)
-        let progressDone = min(max(0, timeline.progress.done), progressTotal)
+            ?? response.timeline.flatMap(\.checklists).first
+        let progressTotal = max(0, response.tripInfo.progress.total)
+        let progressCompleted = min(
+            max(0, response.tripInfo.progress.completed),
+            progressTotal
+        )
+        let essentialInfo = response.essentialInfo
 
         return PreparationTimeline(
-            id: timeline.tripID,
-            destinationName: context.destinationName,
-            countryCode: context.countryCode,
-            dDay: context.dDay,
+            id: tripID,
+            destinationName: response.tripInfo.destination,
+            dDay: response.tripInfo.dDay,
             progress: TimelineProgress(
-                done: progressDone,
+                done: progressCompleted,
                 total: progressTotal
             ),
             highlight: TimelineHighlight(
@@ -91,31 +79,34 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
                     format: String(localized: "timeline.essentialInfo.visaFreeStayDays"),
                     essentialInfo.visaFreeStayDays
                 ),
-                officialSiteName: essentialInfo.officialSiteURL.host() ?? context.countryCode,
+                officialSiteName: essentialInfo.officialSiteURL.host()
+                    ?? response.tripInfo.destination,
                 officialSiteURL: essentialInfo.officialSiteURL,
                 lastUpdatedDescription: formattedDate(essentialInfo.lastUpdatedAt)
             )
         )
     }
 
-    private func date(for phaseLabel: String) -> Date {
-        guard phaseLabel.hasPrefix("D-") else { return context.departureDate }
-        let dayText = phaseLabel.dropFirst(2)
-        guard let daysBeforeDeparture = Int(dayText) else { return context.departureDate }
-        return Calendar.current.date(
-            byAdding: .day,
-            value: -daysBeforeDeparture,
-            to: context.departureDate
-        ) ?? context.departureDate
+    private func dayLabel(_ dDay: Int) -> String {
+        if dDay == 0 { return "D-Day" }
+        return dDay < 0 ? "D\(dDay)" : "D+\(dDay)"
+    }
+
+    private func date(from value: String) -> Date {
+        Self.dateFormatter.date(from: value) ?? Date.distantPast
     }
 
     private func formattedDate(_ value: String) -> String {
+        guard let date = Self.dateFormatter.date(from: value) else { return value }
+        return date.formatted(.dateTime.year().month().day())
+    }
+
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd"
-
-        guard let date = formatter.date(from: value) else { return value }
-        return date.formatted(.dateTime.year().month().day())
-    }
+        return formatter
+    }()
 }

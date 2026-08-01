@@ -77,8 +77,7 @@ struct FixturePreparationTimelineRepository: PreparationTimelineRepository {
         PreparationTimeline(
             id: tripID,
             destinationName: destinationName,
-            countryCode: "USA",
-            dDay: 30,
+            dDay: -30,
             progress: TimelineProgress(done: 4, total: 12),
             highlight: TimelineHighlight(
                 tag: .visa,
@@ -126,8 +125,7 @@ struct FixturePreparationTimelineRepository: PreparationTimelineRepository {
         PreparationTimeline(
             id: tripID,
             destinationName: "싱가포르",
-            countryCode: "SINGAPORE",
-            dDay: 30,
+            dDay: -30,
             progress: TimelineProgress(done: 4, total: 12),
             highlight: TimelineHighlight(
                 tag: .passport,
@@ -183,7 +181,6 @@ struct FixturePreparationTimelineRepository: PreparationTimelineRepository {
         timeline = PreparationTimeline(
             id: timeline.id,
             destinationName: "대만",
-            countryCode: "TAIWAN",
             dDay: timeline.dDay,
             progress: timeline.progress,
             highlight: timeline.highlight,

@@ -81,6 +81,12 @@ struct TimelinePhaseRow: View {
                 .cbTypography(.subhead2)
                 .foregroundStyle(CBColor.blue5)
 
+            if let title = discovery.title, !title.isEmpty {
+                Text(verbatim: title)
+                    .cbTypography(.subhead2)
+                    .foregroundStyle(CBColor.gray8)
+            }
+
             Text(verbatim: discovery.content)
                 .cbTypography(.body2)
                 .foregroundStyle(CBColor.gray7)

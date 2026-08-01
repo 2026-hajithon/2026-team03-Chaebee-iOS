@@ -3,7 +3,6 @@ import Foundation
 struct PreparationTimeline: Equatable, Identifiable, Sendable {
     let id: Int
     let destinationName: String
-    let countryCode: String
     let dDay: Int
     var progress: TimelineProgress
     let highlight: TimelineHighlight
@@ -39,7 +38,15 @@ struct TimelinePhase: Equatable, Identifiable, Sendable {
 struct TimelineDiscovery: Equatable, Identifiable, Sendable {
     let id: Int
     let tag: PreparationTag
+    let title: String?
     let content: String
+
+    init(id: Int, tag: PreparationTag, title: String? = nil, content: String) {
+        self.id = id
+        self.tag = tag
+        self.title = title
+        self.content = content
+    }
 }
 
 struct TimelineChecklistItem: Equatable, Identifiable, Sendable {
@@ -69,6 +76,7 @@ enum PreparationTag: String, Codable, Equatable, Sendable {
     case adapter = "ADAPTER"
     case esimRoaming = "ESIM_ROAMING"
     case entryForm = "ENTRY_FORM"
+    case flight = "FLIGHT"
     case flightBoarding = "FLIGHT_BOARDING"
     case localAirport = "LOCAL_AIRPORT"
     case accommodationCheckin = "ACCOMMODATION_CHECKIN"
@@ -84,6 +92,7 @@ enum PreparationTag: String, Codable, Equatable, Sendable {
         case .adapter: "preparationTag.adapter"
         case .esimRoaming: "preparationTag.esimRoaming"
         case .entryForm: "preparationTag.entryForm"
+        case .flight: "preparationTag.flight"
         case .flightBoarding: "preparationTag.flightBoarding"
         case .localAirport: "preparationTag.localAirport"
         case .accommodationCheckin: "preparationTag.accommodationCheckin"

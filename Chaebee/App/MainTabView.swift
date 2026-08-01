@@ -2,16 +2,27 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selection: MainTab = .home
+    let homeDashboardRepository: any HomeDashboardRepository
+    let preparationTimelineRepository: any PreparationTimelineRepository
     let onLogout: () -> Void
 
-    init(onLogout: @escaping () -> Void = {}) {
+    init(
+        homeDashboardRepository: any HomeDashboardRepository,
+        preparationTimelineRepository: any PreparationTimelineRepository,
+        onLogout: @escaping () -> Void = {}
+    ) {
+        self.homeDashboardRepository = homeDashboardRepository
+        self.preparationTimelineRepository = preparationTimelineRepository
         self.onLogout = onLogout
     }
 
     var body: some View {
         ZStack {
             NavigationStack {
-                HomeDashboardView()
+                HomeDashboardView(
+                    repository: homeDashboardRepository,
+                    timelineRepository: preparationTimelineRepository
+                )
             }
             .tabContentState(isSelected: selection == .home)
 
@@ -65,6 +76,9 @@ enum MainTab: Hashable, CaseIterable {
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(
+        homeDashboardRepository: FixtureHomeDashboardRepository(),
+        preparationTimelineRepository: FixturePreparationTimelineRepository()
+    )
         .environment(\.locale, Locale(identifier: "ko"))
 }

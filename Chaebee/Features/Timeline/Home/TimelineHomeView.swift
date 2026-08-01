@@ -96,7 +96,7 @@ struct TimelineHomeView: View {
                 .cbTypography(.head3)
                 .foregroundStyle(CBColor.gray9)
 
-            Text(verbatim: "D-\(timeline.dDay)")
+            Text(verbatim: dayLabel(timeline.dDay))
                 .cbTypography(.subhead1)
                 .foregroundStyle(Color.white)
                 .padding(.horizontal, CBSpacing.small)
@@ -104,6 +104,11 @@ struct TimelineHomeView: View {
                 .background(CBColor.blue5)
                 .clipShape(RoundedRectangle(cornerRadius: CBRadius.small))
         }
+    }
+
+    private func dayLabel(_ dDay: Int) -> String {
+        if dDay == 0 { return "D-Day" }
+        return dDay < 0 ? "D\(dDay)" : "D+\(dDay)"
     }
 
     private var backButton: some View {

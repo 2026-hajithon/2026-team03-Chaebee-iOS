@@ -17,7 +17,11 @@ struct RootView: View {
                 CBColor.gray1
                     .ignoresSafeArea()
             } else if hasCompletedOnboarding {
-                MainTabView(onLogout: logout)
+                MainTabView(
+                    homeDashboardRepository: environment.homeDashboardRepository,
+                    preparationTimelineRepository: environment.preparationTimelineRepository,
+                    onLogout: logout
+                )
                     .transition(.opacity)
             } else {
                 OnboardingFlowView(

@@ -5,6 +5,8 @@ struct AppEnvironment {
     let authTokenStore: KeychainAuthTokenStore
     let authenticationRepository: any AuthenticationRepository
     let tripRegistrationRepository: any TripRegistrationRepository
+    let homeDashboardRepository: any HomeDashboardRepository
+    let preparationTimelineRepository: any PreparationTimelineRepository
 
     static func live(
         configuration: APIConfiguration = .current
@@ -26,11 +28,19 @@ struct AppEnvironment {
         let tripRegistrationRepository = RemoteTripRegistrationRepository(
             apiClient: client
         )
+        let homeDashboardRepository = RemoteHomeDashboardRepository(
+            apiClient: client
+        )
+        let preparationTimelineRepository = RemotePreparationTimelineRepository(
+            client: client
+        )
         return AppEnvironment(
             apiClient: client,
             authTokenStore: tokenStore,
             authenticationRepository: authenticationRepository,
-            tripRegistrationRepository: tripRegistrationRepository
+            tripRegistrationRepository: tripRegistrationRepository,
+            homeDashboardRepository: homeDashboardRepository,
+            preparationTimelineRepository: preparationTimelineRepository
         )
     }
 }
