@@ -21,14 +21,20 @@ enum GoogleSignInServiceError: LocalizedError {
 
 @MainActor
 protocol GoogleSignInServicing {
-    func signIn() async throws -> String
+    func signIn() async throws -> GoogleSignInCredential
+}
+
+struct GoogleSignInCredential: Equatable, Sendable {
+    let idToken: String
+    let name: String?
+    let email: String?
 }
 
 @MainActor
 final class GoogleSignInService: GoogleSignInServicing {
     private let signIn = GIDSignIn.sharedInstance
 
-    func signIn() async throws -> String {
+    func signIn() async throws -> GoogleSignInCredential {
         guard let clientID = GoogleSignInConfiguration.clientID else {
             throw GoogleSignInServiceError.missingConfiguration
         }
@@ -47,7 +53,11 @@ final class GoogleSignInService: GoogleSignInServicing {
             throw GoogleSignInServiceError.missingIDToken
         }
 
-        return idToken
+        return GoogleSignInCredential(
+            idToken: idToken,
+            name: result.user.profile?.name,
+            email: result.user.profile?.email
+        )
     }
 }
 

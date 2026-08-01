@@ -8,22 +8,32 @@ final class OnboardingAuthenticationViewModel: ObservableObject {
 
     private let repository: any AuthenticationRepository
     private let googleSignInService: any GoogleSignInServicing
+    private let profileRepository: ProfileRepository
 
     init(
         repository: any AuthenticationRepository,
-        googleSignInService: any GoogleSignInServicing
+        googleSignInService: any GoogleSignInServicing,
+        profileRepository: ProfileRepository? = nil
     ) {
         self.repository = repository
         self.googleSignInService = googleSignInService
+        self.profileRepository = profileRepository ?? LocalProfileRepository()
     }
 
     func signInWithGoogle() async -> AuthenticationSession? {
         await authenticate {
-            let providerToken = try await googleSignInService.signIn()
-            return try await repository.login(
+            let credential = try await googleSignInService.signIn()
+            let session = try await repository.login(
                 provider: .google,
-                providerToken: providerToken
+                providerToken: credential.idToken
             )
+
+            _ = profileRepository.syncAuthenticatedProfile(
+                memberID: session.memberID,
+                nickname: credential.name ?? session.name,
+                email: credential.email ?? ""
+            )
+            return session
         }
     }
 

@@ -3,6 +3,7 @@ import Foundation
 final class LocalProfileRepository: ProfileRepository {
     private enum Key {
         static let avatarFileName = "profile.avatarFileName"
+        static let memberID = "profile.memberID"
         static let nickname = "profile.nickname"
         static let email = "profile.email"
     }
@@ -27,6 +28,30 @@ final class LocalProfileRepository: ProfileRepository {
                 ?? "chicken.banana@mail.com",
             avatarData: loadAvatarData()
         )
+    }
+
+    func syncAuthenticatedProfile(
+        memberID: Int,
+        nickname: String,
+        email: String
+    ) -> UserProfile {
+        let storedMemberID = userDefaults.object(forKey: Key.memberID) as? Int
+
+        if storedMemberID != memberID {
+            userDefaults.set(memberID, forKey: Key.memberID)
+            userDefaults.set(nickname, forKey: Key.nickname)
+            userDefaults.set(email, forKey: Key.email)
+            removeAvatarData()
+        } else {
+            if userDefaults.string(forKey: Key.nickname) == nil {
+                userDefaults.set(nickname, forKey: Key.nickname)
+            }
+            if userDefaults.string(forKey: Key.email) == nil {
+                userDefaults.set(email, forKey: Key.email)
+            }
+        }
+
+        return fetchProfile()
     }
 
     func updateProfile(nickname: String, email: String) -> UserProfile {
