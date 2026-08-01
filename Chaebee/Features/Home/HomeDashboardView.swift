@@ -4,6 +4,7 @@ struct HomeDashboardView: View {
     @StateObject private var viewModel: HomeDashboardViewModel
     @State private var isEditingTrips = false
     @State private var pendingTripDeletion: HomeTripSummary?
+    @State private var showsTripRegistration = false
 
     init(
         repository: (any HomeDashboardRepository)? = nil
@@ -30,6 +31,11 @@ struct HomeDashboardView: View {
         .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
+        }
+        .fullScreenCover(isPresented: $showsTripRegistration) {
+            NavigationStack {
+                TripRegistrationFlowView()
+            }
         }
         .confirmationDialog(
             "home.deleteTrip.title",
@@ -66,7 +72,9 @@ struct HomeDashboardView: View {
                 if dashboard.hasRegisteredTrip {
                     registeredTripsSection(dashboard.trips)
                 } else {
-                    EmptyTripCard()
+                    EmptyTripCard {
+                        showsTripRegistration = true
+                    }
                         .padding(.top, CBSpacing.large)
                 }
 
@@ -119,8 +127,8 @@ struct HomeDashboardView: View {
                 }
             }
 
-            NavigationLink {
-                TripRegistrationFlowView()
+            Button {
+                showsTripRegistration = true
             } label: {
                 Text("home.addTrip")
                     .cbTypography(.head2)
