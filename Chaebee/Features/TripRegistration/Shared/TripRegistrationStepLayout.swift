@@ -4,18 +4,24 @@ import SwiftUI
 struct TripRegistrationStepLayout<Content: View>: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let title: LocalizedStringKey
+    private let step: LocalizedStringResource
+    private let title: LocalizedStringResource
+    private let subtitle: LocalizedStringResource?
     private let isNextEnabled: Bool
     private let onNext: () -> Void
     private let content: Content
 
     init(
-        title: LocalizedStringKey,
+        step: LocalizedStringResource = "tripRegistration.step.oneOfFive",
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil,
         isNextEnabled: Bool,
         onNext: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
+        self.step = step
         self.title = title
+        self.subtitle = subtitle
         self.isNextEnabled = isNextEnabled
         self.onNext = onNext
         self.content = content()
@@ -26,7 +32,7 @@ struct TripRegistrationStepLayout<Content: View>: View {
             VStack(alignment: .leading, spacing: 0) {
                 backButton
 
-                Text("tripRegistration.step.oneOfFive")
+                Text(step)
                     .cbTypography(.head2)
                     .foregroundStyle(CBColor.blue5)
                     .padding(.top, 28)
@@ -36,6 +42,14 @@ struct TripRegistrationStepLayout<Content: View>: View {
                     .foregroundStyle(CBColor.gray9)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, CBSpacing.small)
+
+                if let subtitle {
+                    Text(subtitle)
+                        .cbTypography(.body4)
+                        .foregroundStyle(CBColor.gray6)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, CBSpacing.small)
+                }
 
                 content
                     .padding(.top, CBSpacing.xLarge)
@@ -77,4 +91,3 @@ struct TripRegistrationStepLayout<Content: View>: View {
         .accessibilityLabel(Text("common.back"))
     }
 }
-
