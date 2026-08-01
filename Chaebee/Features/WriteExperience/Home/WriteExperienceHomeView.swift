@@ -67,7 +67,10 @@ struct WriteExperienceHomeView: View {
 
                     LazyVStack(spacing: CBSpacing.medium) {
                         ForEach(viewModel.discoveries) { discovery in
-                            TravelerDiscoveryCard(discovery: discovery)
+                            TravelerDiscoveryCard(
+                                discovery: discovery,
+                                avatarData: viewModel.avatarData(for: discovery)
+                            )
                         }
                     }
                     .padding(.top, CBSpacing.medium)

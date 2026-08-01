@@ -1,6 +1,6 @@
 import Foundation
 
-struct TravelerDiscovery: Equatable, Identifiable, Sendable {
+struct TravelerDiscovery: Codable, Equatable, Identifiable, Sendable {
     let id: Int
     let authorName: String
     let authorAvatar: ExperienceAvatar

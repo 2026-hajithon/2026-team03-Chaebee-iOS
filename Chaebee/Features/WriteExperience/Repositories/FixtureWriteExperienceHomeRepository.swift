@@ -8,10 +8,18 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
     }
 
     private var discoveries: [TravelerDiscovery]
-    private var nextLocalDiscoveryID = -1
+    private let localStore: LocalDiscoveryStoring
 
-    init(state: State = .populated) {
-        discoveries = state == .populated ? Self.fixtureDiscoveries : []
+    init(
+        state: State = .populated,
+        localStore: LocalDiscoveryStoring? = nil
+    ) {
+        let resolvedStore = localStore ?? UserDefaultsLocalDiscoveryStore()
+        self.localStore = resolvedStore
+
+        discoveries = state == .populated
+            ? resolvedStore.fetchDiscoveries() + Self.fixtureDiscoveries
+            : []
     }
 
     func fetchDiscoveries(
@@ -25,10 +33,8 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
     ) -> [TravelerDiscovery] {
         let createdAt = Date.now
         let newDiscoveries = request.discoveries.map { discovery in
-            defer { nextLocalDiscoveryID -= 1 }
-
             return TravelerDiscovery(
-                id: nextLocalDiscoveryID,
+                id: localStore.nextDiscoveryID(),
                 authorName: String(localized: "writeExperience.feed.currentUser"),
                 authorAvatar: .blue,
                 createdAt: createdAt,
@@ -38,6 +44,7 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
             )
         }
 
+        localStore.prependDiscoveries(newDiscoveries)
         discoveries.insert(contentsOf: newDiscoveries, at: 0)
         return newDiscoveries
     }
