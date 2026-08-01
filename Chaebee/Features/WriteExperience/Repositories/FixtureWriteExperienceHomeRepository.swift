@@ -1,22 +1,51 @@
 import Foundation
 
-struct FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
-    enum State: Equatable {
+actor FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
+    enum State: Equatable, Sendable {
         case populated
         case empty
     }
 
-    private let state: State
+    private var discoveries: [TravelerDiscovery]
+    private var nextLocalDiscoveryID = -1
 
     init(state: State = .populated) {
-        self.state = state
+        discoveries = state == .populated ? Self.fixtureDiscoveries : []
     }
 
     func fetchDiscoveries(
         sort: ExperienceFeedSort
     ) async throws -> [TravelerDiscovery] {
-        guard state == .populated else { return [] }
+        discoveries
+    }
 
+    func registerDiscovery(
+        request: WriteExperienceRequest
+    ) async throws -> [TravelerDiscovery] {
+        guard let country = ExperienceCountry(rawValue: request.countryCode) else {
+            throw FixtureRepositoryError.unsupportedCountryCode
+        }
+
+        let createdAt = Date.now
+        let newDiscoveries = request.discoveries.map { discovery in
+            defer { nextLocalDiscoveryID -= 1 }
+
+            return TravelerDiscovery(
+                id: nextLocalDiscoveryID,
+                authorName: String(localized: "writeExperience.feed.currentUser"),
+                authorAvatar: .blue,
+                createdAt: createdAt,
+                content: discovery.content,
+                country: country,
+                tag: discovery.tag
+            )
+        }
+
+        discoveries.insert(contentsOf: newDiscoveries, at: 0)
+        return newDiscoveries
+    }
+
+    private static var fixtureDiscoveries: [TravelerDiscovery] {
         let now = Date.now
 
         return [
@@ -48,5 +77,13 @@ struct FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
                 tag: .exchange
             )
         ]
+    }
+}
+
+private enum FixtureRepositoryError: LocalizedError {
+    case unsupportedCountryCode
+
+    var errorDescription: String? {
+        String(localized: "writeExperience.registration.error")
     }
 }

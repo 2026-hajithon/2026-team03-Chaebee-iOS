@@ -14,6 +14,7 @@ struct CBTextField: View {
     private let errorMessage: LocalizedStringKey?
     private let trailingSystemImage: String?
     private let onTrailingTap: (() -> Void)?
+    private let autoFocus: Bool
     private let previewState: CBTextFieldVisualState?
 
     init(
@@ -21,13 +22,15 @@ struct CBTextField: View {
         placeholder: LocalizedStringKey,
         errorMessage: LocalizedStringKey? = nil,
         trailingSystemImage: String? = nil,
-        onTrailingTap: (() -> Void)? = nil
+        onTrailingTap: (() -> Void)? = nil,
+        autoFocus: Bool = false
     ) {
         _text = text
         self.placeholder = placeholder
         self.errorMessage = errorMessage
         self.trailingSystemImage = trailingSystemImage
         self.onTrailingTap = onTrailingTap
+        self.autoFocus = autoFocus
         previewState = nil
     }
 
@@ -43,6 +46,7 @@ struct CBTextField: View {
         self.errorMessage = errorMessage
         self.trailingSystemImage = trailingSystemImage
         onTrailingTap = nil
+        autoFocus = false
         self.previewState = previewState
     }
 
@@ -102,6 +106,11 @@ struct CBTextField: View {
             .easeOut(duration: CBAnimation.quickDuration),
             value: visualState
         )
+        .task {
+            guard autoFocus else { return }
+            await Task.yield()
+            isFocused = true
+        }
     }
 
     @ViewBuilder

@@ -6,6 +6,7 @@ struct ExperienceLocationSearchView: View {
     @State private var query = ""
     @State private var locations: [ExperienceLocation] = []
     @State private var isLoading = false
+    @State private var errorMessage: String?
 
     private let repository: any ExperienceLocationRepository
     private let onSelect: (ExperienceLocation) -> Void
@@ -24,13 +25,25 @@ struct ExperienceLocationSearchView: View {
                 CBTextField(
                     text: $query,
                     placeholder: "writeExperience.location.placeholder",
-                    trailingSystemImage: "magnifyingglass"
+                    trailingSystemImage: "magnifyingglass",
+                    autoFocus: true
                 )
 
                 if isLoading {
                     ProgressView()
                         .tint(CBColor.blue5)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage {
+                    searchMessage(
+                        title: errorMessage,
+                        actionTitle: "writeExperience.location.retry"
+                    ) {
+                        Task { await search() }
+                    }
+                } else if locations.isEmpty {
+                    searchMessage(
+                        title: String(localized: "writeExperience.location.empty")
+                    )
                 } else {
                     ScrollView {
                         LazyVStack(spacing: CBSpacing.small) {
@@ -92,8 +105,39 @@ struct ExperienceLocationSearchView: View {
     }
 
     private func search() async {
+        errorMessage = nil
         isLoading = true
-        locations = (try? await repository.searchLocations(query: query)) ?? []
-        isLoading = false
+
+        do {
+            try await Task.sleep(for: .milliseconds(250))
+            locations = try await repository.searchLocations(query: query)
+            isLoading = false
+        } catch is CancellationError {
+            return
+        } catch {
+            locations = []
+            errorMessage = String(localized: "writeExperience.location.error")
+            isLoading = false
+        }
+    }
+
+    private func searchMessage(
+        title: String,
+        actionTitle: LocalizedStringKey? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View {
+        VStack(spacing: CBSpacing.medium) {
+            Text(verbatim: title)
+                .cbTypography(.body4)
+                .foregroundStyle(CBColor.gray6)
+                .multilineTextAlignment(.center)
+
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .cbTypography(.head2)
+                    .foregroundStyle(CBColor.blue5)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

@@ -9,7 +9,6 @@ final class WriteExperienceHomeViewModel: ObservableObject {
 
     private let repository: any WriteExperienceHomeRepository
     private let sort: ExperienceFeedSort = .latest
-    private var nextLocalDiscoveryID = -1
 
     init(repository: any WriteExperienceHomeRepository) {
         self.repository = repository
@@ -34,26 +33,10 @@ final class WriteExperienceHomeViewModel: ObservableObject {
         await load()
     }
 
-    func register(_ request: WriteExperienceRequest) {
-        guard let country = ExperienceCountry(rawValue: request.countryCode) else {
-            return
-        }
-
-        let createdAt = Date.now
-        let newDiscoveries = request.discoveries.map { discovery in
-            defer { nextLocalDiscoveryID -= 1 }
-
-            return TravelerDiscovery(
-                id: nextLocalDiscoveryID,
-                authorName: String(localized: "writeExperience.feed.currentUser"),
-                authorAvatar: .blue,
-                createdAt: createdAt,
-                content: discovery.content,
-                country: country,
-                tag: discovery.tag
-            )
-        }
-
+    func register(_ request: WriteExperienceRequest) async throws {
+        let newDiscoveries = try await repository.registerDiscovery(
+            request: request
+        )
         discoveries.insert(contentsOf: newDiscoveries, at: 0)
     }
 }

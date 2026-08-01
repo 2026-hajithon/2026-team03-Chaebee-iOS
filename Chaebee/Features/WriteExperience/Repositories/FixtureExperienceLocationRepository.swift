@@ -10,13 +10,29 @@ struct FixtureExperienceLocationRepository: ExperienceLocationRepository {
     ]
 
     func searchLocations(query: String) async throws -> [ExperienceLocation] {
-        guard !query.isEmpty else { return locations }
+        let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedQuery.isEmpty else { return locations }
 
         return locations.filter {
-            $0.cityName.localizedCaseInsensitiveContains(query)
+            $0.citySearchAliases.contains {
+                $0.localizedCaseInsensitiveContains(normalizedQuery)
+            }
                 || $0.country.searchAliases.contains {
-                    $0.localizedCaseInsensitiveContains(query)
+                    $0.localizedCaseInsensitiveContains(normalizedQuery)
                 }
+        }
+    }
+}
+
+private extension ExperienceLocation {
+    var citySearchAliases: [String] {
+        switch id {
+        case 101: [cityName, "Los Angeles", "LA", "LAX"]
+        case 102: [cityName, "New York", "NY", "NYC"]
+        case 201: [cityName, "Taipei"]
+        case 301: [cityName, "Singapore"]
+        case 401: [cityName, "Tokyo"]
+        default: [cityName]
         }
     }
 }
@@ -34,7 +50,7 @@ private extension ExperienceCountry {
         case .th: ["태국", "Thailand"]
         case .tw: ["대만", "Taiwan"]
         case .uk: ["영국", "United Kingdom"]
-        case .us: ["미국", "United States", "USA"]
+        case .us: ["미국", "United States", "USA", "US"]
         case .vn: ["베트남", "Vietnam"]
         }
     }

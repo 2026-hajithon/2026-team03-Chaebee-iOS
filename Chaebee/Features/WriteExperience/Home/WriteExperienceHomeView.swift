@@ -35,8 +35,7 @@ struct WriteExperienceHomeView: View {
         .fullScreenCover(isPresented: $showsWriteExperience) {
             NavigationStack {
                 WriteExperienceInputView { request in
-                    viewModel.register(request)
-                    showsWriteExperience = false
+                    try await viewModel.register(request)
                     showRegistrationToast()
                 }
             }
@@ -134,7 +133,7 @@ struct WriteExperienceHomeView: View {
 
     private var emptyFeedView: some View {
         VStack(spacing: CBSpacing.large) {
-            Image(.emptyDiscovery)
+            Image("emptyDiscovery")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 95)

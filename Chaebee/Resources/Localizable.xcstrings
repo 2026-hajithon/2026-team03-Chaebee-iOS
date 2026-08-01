@@ -1894,8 +1894,39 @@
         }
       }
     },
+    "writeExperience.location.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching destinations found."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일치하는 여행지를 찾지 못했어요."
+          }
+        }
+      }
+    },
+    "writeExperience.location.error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load destinations."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행지를 불러오지 못했어요."
+          }
+        }
+      }
+    },
     "writeExperience.location.placeholder" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1928,6 +1959,22 @@
         }
       }
     },
+    "writeExperience.location.retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시도"
+          }
+        }
+      }
+    },
     "writeExperience.preview.title" : {
       "localizations" : {
         "en" : {
@@ -1940,6 +1987,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "발견을 확인해주세요"
+          }
+        }
+      }
+    },
+    "writeExperience.registration.error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not post your discovery. Please try again."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "발견을 등록하지 못했어요. 다시 시도해주세요."
           }
         }
       }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WriteExperienceNavigationHeader: View {
     let isNextEnabled: Bool
+    var isLoading = false
     var actionTitle: LocalizedStringKey = "common.next"
     let onClose: () -> Void
     let onNext: () -> Void
@@ -24,16 +25,23 @@ struct WriteExperienceNavigationHeader: View {
                 Spacer()
 
                 Button(action: onNext) {
-                    Text(actionTitle)
-                        .cbTypography(.body4)
-                        .foregroundStyle(
-                            isNextEnabled ? Color.white : CBColor.gray4
-                        )
-                        .frame(width: 56, height: 56)
-                        .background(
-                            isNextEnabled ? CBColor.blue5 : Color.white,
-                            in: Circle()
-                        )
+                    Group {
+                        if isLoading {
+                            ProgressView()
+                                .tint(Color.white)
+                        } else {
+                            Text(actionTitle)
+                                .cbTypography(.body4)
+                                .foregroundStyle(
+                                    isNextEnabled ? Color.white : CBColor.gray4
+                                )
+                        }
+                    }
+                    .frame(width: 56, height: 56)
+                    .background(
+                        isNextEnabled || isLoading ? CBColor.blue5 : Color.white,
+                        in: Circle()
+                    )
                 }
                 .buttonStyle(.plain)
                 .disabled(!isNextEnabled)
