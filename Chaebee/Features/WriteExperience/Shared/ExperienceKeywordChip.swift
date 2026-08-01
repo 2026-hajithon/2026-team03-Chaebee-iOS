@@ -8,16 +8,16 @@ struct ExperienceKeywordChip: View {
         case disabled
     }
 
-    private let title: LocalizedStringKey
+    private let title: LocalizedStringResource
     private let icon: ImageResource
     private let state: State
-    private let action: () -> Void
+    private let action: (() -> Void)?
 
     init(
-        title: LocalizedStringKey,
+        title: LocalizedStringResource,
         icon: ImageResource,
         state: State,
-        action: @escaping () -> Void
+        action: (() -> Void)? = nil
     ) {
         self.title = title
         self.icon = icon
@@ -26,7 +26,7 @@ struct ExperienceKeywordChip: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        Button(action: action ?? {}) {
             HStack(spacing: CBSpacing.xSmall) {
                 Image(icon)
                     .resizable()
@@ -34,13 +34,21 @@ struct ExperienceKeywordChip: View {
                     .frame(width: 16, height: 16)
                     .opacity(state == .disabled ? 0.4 : 1)
 
-                Text(title)
+                Text(verbatim: displayTitle)
                     .cbTypography(.body4)
                     .lineLimit(1)
             }
         }
         .buttonStyle(ExperienceKeywordChipStyle(state: state))
         .disabled(state == .disabled)
+        .allowsHitTesting(action != nil && state != .disabled)
+    }
+
+    private var displayTitle: String {
+        let localizedTitle = String(localized: title)
+        return localizedTitle.hasPrefix("#")
+            ? String(localizedTitle.dropFirst())
+            : localizedTitle
     }
 }
 

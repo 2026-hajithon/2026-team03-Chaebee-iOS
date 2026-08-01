@@ -11,7 +11,7 @@ struct MainTabView: View {
             .tabContentState(isSelected: selection == .home)
 
             NavigationStack {
-                WriteExperienceInputView()
+                WriteExperienceHomeView()
             }
             .tabContentState(isSelected: selection == .writeDiscovery)
 

@@ -61,7 +61,7 @@ struct HomeDashboardView: View {
     private func dashboardContent(_ dashboard: HomeDashboard) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                homeHeader
+                CBAppHeader()
 
                 if dashboard.hasRegisteredTrip {
                     registeredTripsSection(dashboard.trips)
@@ -79,23 +79,6 @@ struct HomeDashboardView: View {
         .scrollIndicators(.hidden)
         .refreshable {
             await viewModel.retry()
-        }
-    }
-
-    private var homeHeader: some View {
-        HStack {
-            Image(.logo)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 72, height: 44, alignment: .leading)
-
-            Spacer()
-
-            Image(systemName: "bell.fill")
-                .font(.system(size: 21, weight: .medium))
-                .foregroundStyle(CBColor.gray4)
-                .frame(width: 44, height: 44)
-            .accessibilityLabel(Text("home.notifications"))
         }
     }
 
