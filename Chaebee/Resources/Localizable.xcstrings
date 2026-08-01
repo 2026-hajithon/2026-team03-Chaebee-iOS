@@ -565,6 +565,74 @@
         }
       }
     },
+    "tripRegistration.answer.no" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아니요"
+          }
+        }
+      }
+    },
+    "tripRegistration.answer.yesPlan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, I plan to"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네, 계획이 있어요"
+          }
+        }
+      }
+    },
+    "tripRegistration.cashUsage.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you plan to use cash?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현금을 사용할 계획이 있으신가요?"
+          }
+        }
+      }
+    },
+    "tripRegistration.esimPlan.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you plan to purchase an eSIM?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eSIM을 구매할 계획이 있나요?"
+          }
+        }
+      }
+    },
     "tripRegistration.step.oneOfFive" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -595,6 +663,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "5 중 3단계"
+          }
+        }
+      }
+    },
+    "tripRegistration.step.fourOfFive" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step 4 of 5"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 중 4단계"
+          }
+        }
+      }
+    },
+    "tripRegistration.step.final" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final step"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막 단계"
           }
         }
       }

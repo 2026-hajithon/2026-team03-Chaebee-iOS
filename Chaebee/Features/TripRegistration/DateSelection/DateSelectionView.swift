@@ -4,7 +4,7 @@ struct DateSelectionView: View {
     @State private var selectionPhase = TripDateSelectionPhase.departure
     @State private var departureDate: Date?
     @State private var returnDate: Date?
-    @State private var showsInterestSelection = false
+    @State private var showsESIMPlanSelection = false
 
     private var step: LocalizedStringResource {
         switch selectionPhase {
@@ -30,7 +30,7 @@ struct DateSelectionView: View {
             title: title,
             subtitle: "tripRegistration.dateSelection.subtitle",
             isNextEnabled: departureDate != nil && returnDate != nil,
-            onNext: { showsInterestSelection = true }
+            onNext: { showsESIMPlanSelection = true }
         ) {
             TripDateCalendar(
                 selectionPhase: selectionPhase,
@@ -39,8 +39,8 @@ struct DateSelectionView: View {
                 onSelect: select
             )
         }
-        .navigationDestination(isPresented: $showsInterestSelection) {
-            InterestSelectionView()
+        .navigationDestination(isPresented: $showsESIMPlanSelection) {
+            ESIMPlanSelectionView()
         }
     }
 
