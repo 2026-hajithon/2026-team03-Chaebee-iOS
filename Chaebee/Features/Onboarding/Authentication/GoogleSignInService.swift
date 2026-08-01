@@ -46,6 +46,11 @@ final class GoogleSignInService: GoogleSignInServicing {
             clientID: clientID,
             serverClientID: GoogleSignInConfiguration.serverClientID
         )
+
+        // GIDSignIn persists its own session independently of our app token.
+        // Clear it before an interactive login so an account switch cannot
+        // silently reuse the previously authenticated Google user.
+        signIn.signOut()
         let result = try await signIn.signIn(withPresenting: presentingViewController)
 
         guard let idToken = result.user.idToken?.tokenString,

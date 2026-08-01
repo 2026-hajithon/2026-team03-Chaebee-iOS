@@ -39,10 +39,17 @@ final class OnboardingAuthenticationViewModel: ObservableObject {
 
     func continueAsGuest() async -> AuthenticationSession? {
         await authenticate {
-            try await repository.login(
+            let session = try await repository.login(
                 provider: .guest,
                 providerToken: nil
             )
+
+            _ = profileRepository.syncAuthenticatedProfile(
+                memberID: session.memberID,
+                nickname: session.name,
+                email: ""
+            )
+            return session
         }
     }
 

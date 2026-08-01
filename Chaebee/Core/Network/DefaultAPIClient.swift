@@ -80,6 +80,11 @@ struct DefaultAPIClient: APIClient {
         guard let url = components.url else { throw APIError.invalidURL }
 
         var request = URLRequest(url: url)
+        if endpoint.requiresAuthentication {
+            // Authenticated responses are user-specific even when their URLs are
+            // identical. Never let URLCache reuse another session's response.
+            request.cachePolicy = .reloadIgnoringLocalCacheData
+        }
         request.httpMethod = endpoint.method.rawValue
         request.httpBody = endpoint.body
         request.setValue("application/json", forHTTPHeaderField: "Accept")
