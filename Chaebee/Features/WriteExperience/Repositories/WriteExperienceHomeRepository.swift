@@ -6,5 +6,7 @@ protocol WriteExperienceHomeRepository {
 
     func registerDiscovery(
         request: WriteExperienceRequest
-    ) -> [TravelerDiscovery]
+    ) async throws -> [TravelerDiscovery]
+
+    func fetchMyDiscoveries() async throws -> [TravelerDiscovery]
 }

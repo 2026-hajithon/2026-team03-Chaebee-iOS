@@ -12,12 +12,15 @@ struct ProfileSettingsView: View {
     @State private var isProfileEditPresented = false
     @State private var accountAlert: AccountAlert?
     private let onLogout: () -> Void
+    private let discoveryRepository: any WriteExperienceHomeRepository
 
     init(
         viewModel: ProfileSettingsViewModel? = nil,
+        discoveryRepository: (any WriteExperienceHomeRepository)? = nil,
         onLogout: @escaping () -> Void = {}
     ) {
         _viewModel = StateObject(wrappedValue: viewModel ?? ProfileSettingsViewModel())
+        self.discoveryRepository = discoveryRepository ?? FixtureWriteExperienceHomeRepository()
         self.onLogout = onLogout
     }
 
@@ -140,7 +143,7 @@ struct ProfileSettingsView: View {
             sectionTitle("profile.section.activity")
 
             NavigationLink {
-                MyExperiencesView()
+                MyExperiencesView(repository: discoveryRepository)
             } label: {
                 settingsRow("profile.registeredDiscoveries")
                     .clipShape(

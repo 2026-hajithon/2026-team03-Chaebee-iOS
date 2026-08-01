@@ -20,6 +20,8 @@ struct RootView: View {
                 MainTabView(
                     homeDashboardRepository: environment.homeDashboardRepository,
                     preparationTimelineRepository: environment.preparationTimelineRepository,
+                    writeExperienceRepository: environment.writeExperienceRepository,
+                    experienceLocationRepository: environment.experienceLocationRepository,
                     onLogout: logout
                 )
                     .transition(.opacity)

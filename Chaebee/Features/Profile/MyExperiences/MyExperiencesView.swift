@@ -3,13 +3,28 @@ import SwiftUI
 struct MyExperiencesView: View {
     @StateObject private var viewModel: MyExperiencesViewModel
 
-    init(viewModel: MyExperiencesViewModel? = nil) {
-        _viewModel = StateObject(wrappedValue: viewModel ?? MyExperiencesViewModel())
+    init(
+        repository: (any WriteExperienceHomeRepository)? = nil,
+        viewModel: MyExperiencesViewModel? = nil
+    ) {
+        _viewModel = StateObject(
+            wrappedValue: viewModel ?? MyExperiencesViewModel(repository: repository)
+        )
     }
 
     var body: some View {
         Group {
-            if viewModel.discoveries.isEmpty {
+            if viewModel.isLoading && viewModel.discoveries.isEmpty {
+                ProgressView()
+                    .tint(CBColor.blue5)
+            } else if let errorMessage = viewModel.errorMessage,
+                      viewModel.discoveries.isEmpty {
+                Text(verbatim: errorMessage)
+                    .cbTypography(.body4)
+                    .foregroundStyle(CBColor.gray6)
+                    .multilineTextAlignment(.center)
+                    .padding(CBSpacing.pageHorizontal)
+            } else if viewModel.discoveries.isEmpty {
                 emptyView
             } else {
                 discoveryList
@@ -18,8 +33,8 @@ struct MyExperiencesView: View {
         .background(CBColor.gray1)
         .navigationTitle("profile.registeredDiscoveries")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel.load()
+        .task {
+            await viewModel.load()
         }
     }
 

@@ -4,15 +4,21 @@ struct MainTabView: View {
     @State private var selection: MainTab = .home
     let homeDashboardRepository: any HomeDashboardRepository
     let preparationTimelineRepository: any PreparationTimelineRepository
+    let writeExperienceRepository: any WriteExperienceHomeRepository
+    let experienceLocationRepository: any ExperienceLocationRepository
     let onLogout: () -> Void
 
     init(
         homeDashboardRepository: any HomeDashboardRepository,
         preparationTimelineRepository: any PreparationTimelineRepository,
+        writeExperienceRepository: any WriteExperienceHomeRepository,
+        experienceLocationRepository: any ExperienceLocationRepository,
         onLogout: @escaping () -> Void = {}
     ) {
         self.homeDashboardRepository = homeDashboardRepository
         self.preparationTimelineRepository = preparationTimelineRepository
+        self.writeExperienceRepository = writeExperienceRepository
+        self.experienceLocationRepository = experienceLocationRepository
         self.onLogout = onLogout
     }
 
@@ -27,12 +33,18 @@ struct MainTabView: View {
             .tabContentState(isSelected: selection == .home)
 
             NavigationStack {
-                WriteExperienceHomeView()
+                WriteExperienceHomeView(
+                    repository: writeExperienceRepository,
+                    locationRepository: experienceLocationRepository
+                )
             }
             .tabContentState(isSelected: selection == .writeDiscovery)
 
             NavigationStack {
-                ProfileSettingsView(onLogout: onLogout)
+                ProfileSettingsView(
+                    discoveryRepository: writeExperienceRepository,
+                    onLogout: onLogout
+                )
             }
             .tabContentState(isSelected: selection == .more)
         }
@@ -78,7 +90,9 @@ enum MainTab: Hashable, CaseIterable {
 #Preview {
     MainTabView(
         homeDashboardRepository: FixtureHomeDashboardRepository(),
-        preparationTimelineRepository: FixturePreparationTimelineRepository()
+        preparationTimelineRepository: FixturePreparationTimelineRepository(),
+        writeExperienceRepository: FixtureWriteExperienceHomeRepository(),
+        experienceLocationRepository: FixtureExperienceLocationRepository()
     )
         .environment(\.locale, Locale(identifier: "ko"))
 }

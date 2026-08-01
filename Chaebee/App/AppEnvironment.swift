@@ -7,6 +7,8 @@ struct AppEnvironment {
     let tripRegistrationRepository: any TripRegistrationRepository
     let homeDashboardRepository: any HomeDashboardRepository
     let preparationTimelineRepository: any PreparationTimelineRepository
+    let writeExperienceRepository: any WriteExperienceHomeRepository
+    let experienceLocationRepository: any ExperienceLocationRepository
 
     static func live(
         configuration: APIConfiguration = .current
@@ -34,13 +36,21 @@ struct AppEnvironment {
         let preparationTimelineRepository = RemotePreparationTimelineRepository(
             client: client
         )
+        let writeExperienceRepository = RemoteWriteExperienceHomeRepository(
+            apiClient: client
+        )
+        let experienceLocationRepository = RemoteExperienceLocationRepository(
+            apiClient: client
+        )
         return AppEnvironment(
             apiClient: client,
             authTokenStore: tokenStore,
             authenticationRepository: authenticationRepository,
             tripRegistrationRepository: tripRegistrationRepository,
             homeDashboardRepository: homeDashboardRepository,
-            preparationTimelineRepository: preparationTimelineRepository
+            preparationTimelineRepository: preparationTimelineRepository,
+            writeExperienceRepository: writeExperienceRepository,
+            experienceLocationRepository: experienceLocationRepository
         )
     }
 }

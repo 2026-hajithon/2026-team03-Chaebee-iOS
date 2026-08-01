@@ -40,13 +40,19 @@ final class WriteExperienceHomeViewModel: ObservableObject {
         await load()
     }
 
-    func register(_ request: WriteExperienceRequest) {
+    func register(_ request: WriteExperienceRequest) async -> Bool {
         currentUserAvatarData = profileRepository.fetchProfile().avatarData
 
-        let newDiscoveries = repository.registerDiscovery(
-            request: request
-        )
-        discoveries.insert(contentsOf: newDiscoveries, at: 0)
+        do {
+            let newDiscoveries = try await repository.registerDiscovery(
+                request: request
+            )
+            discoveries.insert(contentsOf: newDiscoveries, at: 0)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 
     func avatarData(for discovery: TravelerDiscovery) -> Data? {

@@ -5,9 +5,14 @@ struct WriteExperienceHomeView: View {
     @State private var showsWriteExperience = false
     @State private var showsRegistrationToast = false
     @State private var registrationToastTask: Task<Void, Never>?
+    private let locationRepository: any ExperienceLocationRepository
 
-    init(repository: (any WriteExperienceHomeRepository)? = nil) {
+    init(
+        repository: (any WriteExperienceHomeRepository)? = nil,
+        locationRepository: (any ExperienceLocationRepository)? = nil
+    ) {
         let resolvedRepository = repository ?? FixtureWriteExperienceHomeRepository()
+        self.locationRepository = locationRepository ?? FixtureExperienceLocationRepository()
         _viewModel = StateObject(
             wrappedValue: WriteExperienceHomeViewModel(
                 repository: resolvedRepository
@@ -34,9 +39,14 @@ struct WriteExperienceHomeView: View {
         }
         .fullScreenCover(isPresented: $showsWriteExperience) {
             NavigationStack {
-                WriteExperienceInputView { request in
-                    viewModel.register(request)
-                    showRegistrationToast()
+                WriteExperienceInputView(
+                    locationRepository: locationRepository
+                ) { request in
+                    Task {
+                        if await viewModel.register(request) {
+                            showRegistrationToast()
+                        }
+                    }
                 }
             }
         }
