@@ -478,6 +478,55 @@
         }
       }
     },
+    "home.deleteTrip.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete trip"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행 삭제"
+          }
+        }
+      }
+    },
+    "home.deleteTrip.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preparation timeline and checklist for this trip will also be deleted."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 여행의 준비 타임라인과 체크리스트도 함께 삭제돼요"
+          }
+        }
+      }
+    },
+    "home.deleteTrip.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this trip?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 여행을 삭제할까요?"
+          }
+        }
+      }
+    },
     "home.editorDiscoveries" : {
       "localizations" : {
         "en" : {
@@ -495,6 +544,7 @@
       }
     },
     "home.editTrips" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

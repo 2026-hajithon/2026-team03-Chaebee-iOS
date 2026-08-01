@@ -31,4 +31,21 @@ final class HomeDashboardViewModel: ObservableObject {
         dashboard = nil
         await load()
     }
+
+    func deleteTrip(id: Int) async {
+        guard var updatedDashboard = dashboard else { return }
+        let previousDashboard = updatedDashboard
+        updatedDashboard = HomeDashboard(
+            trips: updatedDashboard.trips.filter { $0.id != id },
+            editorDiscoveries: updatedDashboard.editorDiscoveries
+        )
+        dashboard = updatedDashboard
+
+        do {
+            try await repository.deleteTrip(id: id)
+        } catch {
+            dashboard = previousDashboard
+            errorMessage = error.localizedDescription
+        }
+    }
 }

@@ -2,12 +2,15 @@ import SwiftUI
 
 struct HomeDashboardView: View {
     @StateObject private var viewModel: HomeDashboardViewModel
+    @State private var isEditingTrips = false
+    @State private var pendingTripDeletion: HomeTripSummary?
 
     init(
-        repository: any HomeDashboardRepository = FixtureHomeDashboardRepository()
+        repository: (any HomeDashboardRepository)? = nil
     ) {
+        let resolvedRepository = repository ?? FixtureHomeDashboardRepository()
         _viewModel = StateObject(
-            wrappedValue: HomeDashboardViewModel(repository: repository)
+            wrappedValue: HomeDashboardViewModel(repository: resolvedRepository)
         )
     }
 
@@ -27,6 +30,31 @@ struct HomeDashboardView: View {
         .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
+        }
+        .confirmationDialog(
+            "home.deleteTrip.title",
+            isPresented: Binding(
+                get: { pendingTripDeletion != nil },
+                set: { if !$0 { pendingTripDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("home.deleteTrip.confirm", role: .destructive) {
+                guard let trip = pendingTripDeletion else { return }
+                pendingTripDeletion = nil
+                Task {
+                    await viewModel.deleteTrip(id: trip.id)
+                    if viewModel.dashboard?.trips.isEmpty == true {
+                        isEditingTrips = false
+                    }
+                }
+            }
+
+            Button("common.cancel", role: .cancel) {
+                pendingTripDeletion = nil
+            }
+        } message: {
+            Text("home.deleteTrip.message")
         }
     }
 
@@ -80,30 +108,31 @@ struct HomeDashboardView: View {
 
                 Spacer()
 
-                Text("home.editTrips")
-                    .cbTypography(.body2)
-                    .foregroundStyle(CBColor.gray6)
+                Button {
+                    withAnimation(.easeOut(duration: CBAnimation.quickDuration)) {
+                        isEditingTrips.toggle()
+                    }
+                } label: {
+                    Text(editTripsTitle)
+                        .cbTypography(.body2)
+                        .foregroundStyle(isEditingTrips ? CBColor.blue5 : CBColor.gray6)
+                }
+                .buttonStyle(.plain)
             }
 
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: CBSpacing.small),
-                    GridItem(.flexible(), spacing: CBSpacing.small)
-                ],
-                spacing: CBSpacing.small
-            ) {
-                ForEach(trips) { trip in
-                    NavigationLink {
-                        TimelineHomeView(
-                            tripID: trip.id,
-                            repository: FixturePreparationTimelineRepository(
-                                destination: trip.timelineDestination
-                            )
-                        )
-                    } label: {
-                        HomeTripCard(trip: trip)
+            if trips.count == 1, let trip = trips.first {
+                tripCard(trip, layout: .single)
+            } else {
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: CBSpacing.small),
+                        GridItem(.flexible(), spacing: CBSpacing.small)
+                    ],
+                    spacing: CBSpacing.small
+                ) {
+                    ForEach(trips) { trip in
+                        tripCard(trip, layout: .grid)
                     }
-                    .buttonStyle(.plain)
                 }
             }
 
@@ -121,6 +150,37 @@ struct HomeDashboardView: View {
             .buttonStyle(.plain)
         }
         .padding(.top, CBSpacing.medium)
+    }
+
+    private var editTripsTitle: LocalizedStringKey {
+        isEditingTrips ? "common.done" : "home.editTrips"
+    }
+
+    @ViewBuilder
+    private func tripCard(
+        _ trip: HomeTripSummary,
+        layout: HomeTripCard.Layout
+    ) -> some View {
+        if isEditingTrips {
+            HomeTripCard(
+                trip: trip,
+                layout: layout,
+                isEditing: true,
+                onDelete: { pendingTripDeletion = trip }
+            )
+        } else {
+            NavigationLink {
+                TimelineHomeView(
+                    tripID: trip.id,
+                    repository: FixturePreparationTimelineRepository(
+                        destination: trip.timelineDestination
+                    )
+                )
+            } label: {
+                HomeTripCard(trip: trip, layout: layout)
+            }
+            .buttonStyle(.plain)
+        }
     }
 
     private func discoverySection(
@@ -166,6 +226,15 @@ struct HomeDashboardView: View {
     NavigationStack {
         HomeDashboardView(
             repository: FixtureHomeDashboardRepository(state: .empty)
+        )
+    }
+    .environment(\.locale, Locale(identifier: "ko"))
+}
+
+#Preview("Single Trip") {
+    NavigationStack {
+        HomeDashboardView(
+            repository: FixtureHomeDashboardRepository(state: .singleTrip)
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))

@@ -2,6 +2,26 @@ import SwiftUI
 
 struct HomeTripCard: View {
     let trip: HomeTripSummary
+    let layout: Layout
+    let isEditing: Bool
+    let onDelete: () -> Void
+
+    enum Layout {
+        case grid
+        case single
+    }
+
+    init(
+        trip: HomeTripSummary,
+        layout: Layout = .grid,
+        isEditing: Bool = false,
+        onDelete: @escaping () -> Void = {}
+    ) {
+        self.trip = trip
+        self.layout = layout
+        self.isEditing = isEditing
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -14,13 +34,27 @@ struct HomeTripCard: View {
 
                 Spacer()
 
-                Text(verbatim: "D-\(trip.dDay)")
-                    .cbTypography(.subhead1)
-                    .foregroundStyle(Color.white)
-                    .padding(.horizontal, CBSpacing.small)
-                    .frame(height: 24)
-                    .background(CBColor.blue5)
-                    .clipShape(RoundedRectangle(cornerRadius: CBRadius.small))
+                if isEditing {
+                    Button(action: onDelete) {
+                        Image(.trashX)
+                            .resizable()
+                            .renderingMode(.template)
+                            .scaledToFit()
+                            .foregroundStyle(CBColor.gray5)
+                            .frame(width: 24, height: 24)
+                            .frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("home.deleteTrip.confirm"))
+                } else {
+                    Text(verbatim: "D-\(trip.dDay)")
+                        .cbTypography(.subhead1)
+                        .foregroundStyle(Color.white)
+                        .padding(.horizontal, CBSpacing.small)
+                        .frame(height: 24)
+                        .background(CBColor.blue5)
+                        .clipShape(RoundedRectangle(cornerRadius: CBRadius.small))
+                }
             }
 
             Spacer(minLength: CBSpacing.large)
@@ -41,7 +75,11 @@ struct HomeTripCard: View {
             .padding(.top, CBSpacing.xSmall)
         }
         .padding(CBSpacing.medium)
-        .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
+        .frame(
+            maxWidth: .infinity,
+            minHeight: layout == .single ? 156 : 184,
+            alignment: .topLeading
+        )
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: CBRadius.large))
         .accessibilityElement(children: .combine)

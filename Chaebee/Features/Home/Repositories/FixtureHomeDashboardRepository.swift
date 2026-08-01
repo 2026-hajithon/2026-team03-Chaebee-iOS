@@ -1,25 +1,34 @@
-struct FixtureHomeDashboardRepository: HomeDashboardRepository {
+@MainActor
+final class FixtureHomeDashboardRepository: HomeDashboardRepository {
     enum State: Sendable {
         case registered
+        case singleTrip
         case empty
     }
 
-    let state: State
+    private var currentTrips: [HomeTripSummary]
 
     init(state: State = .empty) {
-        self.state = state
-    }
-
-    func fetchDashboard() async throws -> HomeDashboard {
+        let trips = Self.makeTrips()
         switch state {
         case .empty:
-            HomeDashboard(trips: [], editorDiscoveries: discoveries)
+            currentTrips = []
+        case .singleTrip:
+            currentTrips = [trips[0]]
         case .registered:
-            HomeDashboard(trips: trips, editorDiscoveries: discoveries)
+            currentTrips = trips
         }
     }
 
-    private var trips: [HomeTripSummary] {
+    func fetchDashboard() async throws -> HomeDashboard {
+        HomeDashboard(trips: currentTrips, editorDiscoveries: discoveries)
+    }
+
+    func deleteTrip(id: Int) async throws {
+        currentTrips.removeAll { $0.id == id }
+    }
+
+    private static func makeTrips() -> [HomeTripSummary] {
         [
             HomeTripSummary(
                 id: 12,
