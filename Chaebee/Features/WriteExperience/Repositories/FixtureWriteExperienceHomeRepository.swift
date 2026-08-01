@@ -35,11 +35,12 @@ final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository 
         request: WriteExperienceRequest
     ) async throws -> [TravelerDiscovery] {
         let createdAt = Date.now
+        let profile = profileRepository.fetchProfile()
         let newDiscoveries = request.discoveries.map { discovery in
             return TravelerDiscovery(
                 id: localStore.nextDiscoveryID(),
-                authorName: String(localized: "writeExperience.feed.currentUser"),
-                authorAvatar: profileRepository.fetchProfile().avatarColor,
+                authorName: profile.nickname,
+                authorAvatar: profile.avatarColor,
                 createdAt: createdAt,
                 content: discovery.content,
                 country: request.country,

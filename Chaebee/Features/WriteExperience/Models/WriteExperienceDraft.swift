@@ -18,7 +18,7 @@ struct ExperienceLocation: Equatable, Identifiable, Sendable {
 
 enum ExperienceTravelType: String, CaseIterable, Codable, Identifiable, Sendable {
     case solo = "SOLO"
-    case friends = "FRIENDS"
+    case friends = "FRIEND"
     case couple = "COUPLE"
     case family = "FAMILY"
     case group = "GROUP"

@@ -23,10 +23,12 @@ struct TravelerDiscoveryCard: View {
                 Spacer()
             }
 
-            Text(verbatim: discovery.content)
-                .cbTypography(.body4)
-                .foregroundStyle(CBColor.gray8)
-                .fixedSize(horizontal: false, vertical: true)
+            if let content = discovery.content, !content.isEmpty {
+                Text(verbatim: content)
+                    .cbTypography(.body4)
+                    .foregroundStyle(CBColor.gray8)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             HStack(spacing: CBSpacing.small) {
                 ExperienceCountryTag(
@@ -34,11 +36,13 @@ struct TravelerDiscoveryCard: View {
                     flag: discovery.country.flagResource
                 )
 
-                ExperienceKeywordChip(
-                    title: discovery.tag.localizedName,
-                    icon: discovery.tag.iconResource,
-                    state: .selectable
-                )
+                if let tag = discovery.tag {
+                    ExperienceKeywordChip(
+                        title: tag.localizedName,
+                        icon: tag.iconResource,
+                        state: .selectable
+                    )
+                }
             }
         }
         .padding(CBSpacing.medium)

@@ -2,6 +2,15 @@ import Foundation
 
 struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
     let apiClient: any APIClient
+    private let profileRepository: ProfileRepository
+
+    init(
+        apiClient: any APIClient,
+        profileRepository: ProfileRepository = LocalProfileRepository()
+    ) {
+        self.apiClient = apiClient
+        self.profileRepository = profileRepository
+    }
 
     func fetchDiscoveries(
         sort: ExperienceFeedSort
@@ -10,8 +19,13 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
             DiscoveryEndpoint.list(),
             as: APIResponseDTO<DiscoveryPageResponseDTO>.self
         )
+        let currentUserDiscoveryIDs = await fetchCurrentUserDiscoveryIDs()
+
         return response.data.content.flatMap {
-            map($0, isCurrentUser: false)
+            map(
+                $0,
+                isCurrentUser: currentUserDiscoveryIDs.contains($0.discoveryID)
+            )
         }
     }
 
@@ -32,6 +46,21 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         )
         return response.data.flatMap {
             map($0, isCurrentUser: true)
+        }
+    }
+
+    private func fetchCurrentUserDiscoveryIDs() async -> Set<Int> {
+        do {
+            let response: APIResponseDTO<[DiscoveryListItemResponseDTO]> = try await apiClient.request(
+                DiscoveryEndpoint.mine,
+                as: APIResponseDTO<[DiscoveryListItemResponseDTO]>.self
+            )
+            return Set(response.data.map(\.discoveryID))
+        } catch {
+#if DEBUG
+            print("[DiscoveryAudit] GET /discoveries/me failed: \(error.localizedDescription)")
+#endif
+            return []
         }
     }
 
@@ -58,7 +87,22 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
             subDiscoveries = []
         }
 
-        return subDiscoveries.compactMap { subDiscovery in
+        if subDiscoveries.isEmpty {
+            let mockDetails = mockDetails(for: response.discoveryID)
+            return [
+                makeTravelerDiscovery(
+                    id: response.discoveryID,
+                    authorName: response.authorName,
+                    createdAt: response.createdAt,
+                    country: country,
+                    tag: response.tag ?? mockDetails.tag.rawValue,
+                    content: response.content ?? mockDetails.content,
+                    isCurrentUser: isCurrentUser
+                )
+            ]
+        }
+
+        return subDiscoveries.map { subDiscovery in
             makeTravelerDiscovery(
                 id: subDiscovery.subDiscoveryID,
                 authorName: response.authorName,
@@ -78,10 +122,12 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
             return []
         }
 
-        return response.subDiscoveries.compactMap { subDiscovery in
+        let authorName = profileRepository.fetchProfile().nickname
+
+        return response.subDiscoveries.map { subDiscovery in
             makeTravelerDiscovery(
                 id: subDiscovery.subDiscoveryID,
-                authorName: String(localized: "writeExperience.feed.currentUser"),
+                authorName: authorName,
                 createdAt: response.createdAt,
                 country: country,
                 tag: subDiscovery.tag,
@@ -96,22 +142,18 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         authorName: String,
         createdAt: String,
         country: ExperienceCountry,
-        tag: String,
-        content: String,
+        tag: String?,
+        content: String?,
         isCurrentUser: Bool
-    ) -> TravelerDiscovery? {
-        guard let preparationTag = PreparationTag(rawValue: tag) else {
-            return nil
-        }
-
-        return TravelerDiscovery(
+    ) -> TravelerDiscovery {
+        TravelerDiscovery(
             id: isCurrentUser ? -abs(id) : id,
             authorName: authorName,
             authorAvatar: avatar(for: authorName),
             createdAt: Self.date(from: createdAt),
             content: content,
             country: country,
-            tag: preparationTag
+            tag: tag.flatMap(PreparationTag.init(rawValue:))
         )
     }
 
@@ -121,6 +163,38 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         }
         let avatars = ExperienceAvatar.allCases
         return avatars[Int(stableHash % UInt64(avatars.count))]
+    }
+
+    private func mockDetails(
+        for discoveryID: Int
+    ) -> (tag: PreparationTag, content: String) {
+        switch abs(discoveryID % 5) {
+        case 0:
+            return (
+                .passport,
+                "출국 전에 여권 유효기간이 충분히 남았는지 미리 확인해 두세요."
+            )
+        case 1:
+            return (
+                .exchange,
+                "공항보다 시내 환전소의 환율이 더 좋은 경우가 많아 미리 비교해 보는 게 좋아요."
+            )
+        case 2:
+            return (
+                .esimRoaming,
+                "현지 도착 전에 eSIM을 설치해 두면 공항에서 바로 데이터를 사용할 수 있어요."
+            )
+        case 3:
+            return (
+                .adapter,
+                "숙소의 콘센트 규격과 전압을 확인하고 멀티 어댑터를 챙기면 편리해요."
+            )
+        default:
+            return (
+                .transitCard,
+                "교통카드를 미리 준비하면 현지 대중교통을 더 빠르고 편하게 이용할 수 있어요."
+            )
+        }
     }
 
     private static func date(from value: String) -> Date {

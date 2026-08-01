@@ -2,21 +2,64 @@ import Foundation
 
 struct RemoteExperienceLocationRepository: ExperienceLocationRepository {
     let apiClient: any APIClient
+    private let fallbackRepository: any ExperienceLocationRepository
+
+    init(
+        apiClient: any APIClient,
+        fallbackRepository: any ExperienceLocationRepository = FixtureExperienceLocationRepository()
+    ) {
+        self.apiClient = apiClient
+        self.fallbackRepository = fallbackRepository
+    }
 
     func searchLocations(query: String) async throws -> [ExperienceLocation] {
-        let response: APIResponseDTO<[TripRegistrationResponseDTO]> = try await apiClient.request(
-            HomeTripListEndpoint(),
-            as: APIResponseDTO<[TripRegistrationResponseDTO]>.self
+        let fallbackLocations = try await fallbackRepository.searchLocations(
+            query: query
         )
-        let locations = response.data.compactMap(makeLocation)
-        let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !normalizedQuery.isEmpty else { return locations }
 
-        return locations.filter { location in
-            location.cityName.localizedCaseInsensitiveContains(normalizedQuery)
+        do {
+            let response: APIResponseDTO<[TripRegistrationResponseDTO]> = try await apiClient.request(
+                HomeTripListEndpoint(),
+                as: APIResponseDTO<[TripRegistrationResponseDTO]>.self
+            )
+            let remoteLocations = response.data
+                .compactMap(makeLocation)
+                .filter { matches($0, query: query) }
+
+            return merged(
+                remoteLocations: remoteLocations,
+                fallbackLocations: fallbackLocations
+            )
+        } catch {
+#if DEBUG
+            print("[ExperienceLocation] Using mock fallback: \(error.localizedDescription)")
+#endif
+            return fallbackLocations
+        }
+    }
+
+    private func merged(
+        remoteLocations: [ExperienceLocation],
+        fallbackLocations: [ExperienceLocation]
+    ) -> [ExperienceLocation] {
+        var seenKeys = Set(remoteLocations.map(locationKey))
+        let uniqueFallbacks = fallbackLocations.filter {
+            seenKeys.insert(locationKey($0)).inserted
+        }
+        return remoteLocations + uniqueFallbacks
+    }
+
+    private func locationKey(_ location: ExperienceLocation) -> String {
+        location.country.rawValue + "|" + location.cityName.lowercased()
+    }
+
+    private func matches(_ location: ExperienceLocation, query: String) -> Bool {
+        let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedQuery.isEmpty else { return true }
+
+        return location.cityName.localizedCaseInsensitiveContains(normalizedQuery)
                 || String(localized: location.country.localizedName)
                     .localizedCaseInsensitiveContains(normalizedQuery)
-        }
     }
 
     private func makeLocation(

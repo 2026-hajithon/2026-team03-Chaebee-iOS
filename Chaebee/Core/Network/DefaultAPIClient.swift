@@ -132,7 +132,10 @@ struct DefaultAPIClient: APIClient {
                 + "status=\(response.statusCode) bytes=\(data.count)"
         )
 
-        guard endpoint.path.hasPrefix("/trips") || !(200..<300 ~= response.statusCode) else {
+        let shouldLogResponseBody = endpoint.path.hasPrefix("/trips")
+            || endpoint.path.hasPrefix("/discoveries")
+            || !(200..<300 ~= response.statusCode)
+        guard shouldLogResponseBody else {
             return
         }
         guard

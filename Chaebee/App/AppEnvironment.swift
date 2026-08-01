@@ -37,13 +37,10 @@ struct AppEnvironment {
         let preparationTimelineRepository = RemotePreparationTimelineRepository(
             client: client
         )
-        let writeExperienceRepository = FixtureWriteExperienceHomeRepository(
-            state: .populated
-        )
-        let myDiscoveriesRepository = AuthorSyncedWriteExperienceHomeRepository(
-            localRepository: writeExperienceRepository,
+        let writeExperienceRepository = RemoteWriteExperienceHomeRepository(
             apiClient: client
         )
+        let myDiscoveriesRepository = writeExperienceRepository
         let experienceLocationRepository = FixtureExperienceLocationRepository()
         return AppEnvironment(
             apiClient: client,
