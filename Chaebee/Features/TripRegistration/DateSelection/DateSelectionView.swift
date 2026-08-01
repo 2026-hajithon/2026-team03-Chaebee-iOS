@@ -1,10 +1,16 @@
 import SwiftUI
 
 struct DateSelectionView: View {
+    @ObservedObject private var registration: TripRegistrationViewModel
+
     @State private var selectionPhase = TripDateSelectionPhase.departure
     @State private var departureDate: Date?
     @State private var returnDate: Date?
     @State private var showsESIMPlanSelection = false
+
+    init(registration: TripRegistrationViewModel) {
+        self.registration = registration
+    }
 
     private var step: LocalizedStringResource {
         switch selectionPhase {
@@ -40,7 +46,7 @@ struct DateSelectionView: View {
             )
         }
         .navigationDestination(isPresented: $showsESIMPlanSelection) {
-            ESIMPlanSelectionView()
+            ESIMPlanSelectionView(registration: registration)
         }
     }
 
@@ -49,10 +55,12 @@ struct DateSelectionView: View {
         case .departure:
             departureDate = date
             returnDate = nil
+            registration.selectDepartureDate(date)
             selectionPhase = .returnDate
         case .returnDate:
             guard let departureDate, date >= departureDate else { return }
             returnDate = date
+            registration.selectReturnDate(date)
         }
     }
 }
@@ -337,7 +345,7 @@ private struct TripDateRangeShape: Shape {
 
 #Preview {
     NavigationStack {
-        DateSelectionView()
+        DateSelectionView(registration: TripRegistrationViewModel())
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }

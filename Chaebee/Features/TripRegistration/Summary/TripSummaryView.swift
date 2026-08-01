@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct TripSummaryView: View {
-    let options: TripRegistrationOptions?
+    @ObservedObject private var registration: TripRegistrationViewModel
 
-    init(options: TripRegistrationOptions? = nil) {
-        self.options = options
+    init(registration: TripRegistrationViewModel) {
+        self.registration = registration
     }
 
     var body: some View {
@@ -13,5 +13,5 @@ struct TripSummaryView: View {
 }
 
 #Preview {
-    TripSummaryView()
+    TripSummaryView(registration: TripRegistrationViewModel())
 }

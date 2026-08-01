@@ -2,18 +2,9 @@ import Combine
 
 @MainActor
 final class CashUsageSelectionViewModel: ObservableObject {
-    @Published var options: TripRegistrationOptions?
+    @Published var showsSummary = false
 
-    private let plansToBuyESIM: Bool
-
-    init(plansToBuyESIM: Bool) {
-        self.plansToBuyESIM = plansToBuyESIM
-    }
-
-    func select(_ answer: Bool) {
-        options = TripRegistrationOptions(
-            plansToBuyESIM: plansToBuyESIM,
-            plansToUseCash: answer
-        )
+    func proceed() {
+        showsSummary = true
     }
 }

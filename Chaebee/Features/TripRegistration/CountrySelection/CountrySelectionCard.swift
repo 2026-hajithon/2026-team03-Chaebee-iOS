@@ -4,6 +4,7 @@ import SwiftUI
 struct CountrySelectionCard: View {
     enum State: Equatable {
         case selectable
+        case navigable
         case selected
         case comingSoon
     }
@@ -49,7 +50,7 @@ private struct CountrySelectionCardContent: View {
             CBColor.blue5
         case .comingSoon:
             CBColor.gray4
-        case .selectable:
+        case .selectable, .navigable:
             CBColor.gray8
         }
     }
@@ -95,6 +96,9 @@ private struct CountrySelectionCardContent: View {
         case .selectable:
             Image(systemName: "checkmark")
                 .foregroundStyle(CBColor.gray3)
+        case .navigable:
+            Image(systemName: "chevron.right")
+                .foregroundStyle(CBColor.gray6)
         case .selected:
             Image(systemName: "checkmark")
                 .foregroundStyle(CBColor.blue5)
@@ -135,7 +139,7 @@ private struct CountrySelectionCardStyle: ButtonStyle {
         switch state {
         case .selected:
             CBColor.blue1
-        case .selectable:
+        case .selectable, .navigable:
             Color.white
         case .comingSoon:
             Color.white
@@ -147,7 +151,7 @@ private struct CountrySelectionCardStyle: ButtonStyle {
     }
 }
 
-#Preview("Country card 4 states") {
+#Preview("Country card states") {
     VStack(spacing: CBSpacing.medium) {
         CountrySelectionCard(
             name: "country.jp",
@@ -157,6 +161,13 @@ private struct CountrySelectionCardStyle: ButtonStyle {
         )
 
         previewPressedCountryCard
+
+        CountrySelectionCard(
+            name: "country.us",
+            flag: .flagUS,
+            state: .navigable,
+            action: {}
+        )
 
         CountrySelectionCard(
             name: "country.tw",

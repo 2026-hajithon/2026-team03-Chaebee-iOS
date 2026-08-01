@@ -1,8 +1,14 @@
 import SwiftUI
 
 struct CitySelectionView: View {
+    @ObservedObject private var registration: TripRegistrationViewModel
+
     @State private var selectedCity: City?
     @State private var showsDateSelection = false
+
+    init(registration: TripRegistrationViewModel) {
+        self.registration = registration
+    }
 
     var body: some View {
         TripRegistrationStepLayout(
@@ -15,14 +21,20 @@ struct CitySelectionView: View {
                     CitySelectionButton(
                         name: city.name,
                         state: state(for: city),
-                        action: { selectedCity = city }
+                        action: { select(city) }
                     )
                 }
             }
         }
         .navigationDestination(isPresented: $showsDateSelection) {
-            DateSelectionView()
+            DateSelectionView(registration: registration)
         }
+    }
+
+    private func select(_ city: City) {
+        guard city.availability == .selectable else { return }
+        selectedCity = city
+        registration.selectCity(id: city.rawValue)
     }
 
     private func state(for city: City) -> CitySelectionButton.State {
@@ -46,7 +58,7 @@ private enum City: String, CaseIterable, Identifiable {
     case newYork
     case honolulu
 
-    enum Availability {
+    enum Availability: Equatable {
         case selectable
         case disabled
         case comingSoon
@@ -74,7 +86,7 @@ private enum City: String, CaseIterable, Identifiable {
 
 #Preview {
     NavigationStack {
-        CitySelectionView()
+        CitySelectionView(registration: TripRegistrationViewModel())
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }

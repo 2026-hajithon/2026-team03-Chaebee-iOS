@@ -1,9 +1,15 @@
 import SwiftUI
 
 struct CountrySelectionView: View {
+    @ObservedObject private var registration: TripRegistrationViewModel
+
     @State private var selectedCountry: Country?
     @State private var showsCitySelection = false
     @State private var showsDateSelection = false
+
+    init(registration: TripRegistrationViewModel) {
+        self.registration = registration
+    }
 
     var body: some View {
         TripRegistrationStepLayout(
@@ -29,10 +35,10 @@ struct CountrySelectionView: View {
             }
         }
         .navigationDestination(isPresented: $showsCitySelection) {
-            CitySelectionView()
+            CitySelectionView(registration: registration)
         }
         .navigationDestination(isPresented: $showsDateSelection) {
-            DateSelectionView()
+            DateSelectionView(registration: registration)
         }
     }
 
@@ -42,7 +48,9 @@ struct CountrySelectionView: View {
         }
 
         switch country.availability {
-        case .citySelection, .countrySelection:
+        case .citySelection:
+            return .navigable
+        case .countrySelection:
             return .selectable
         case .comingSoon:
             return .comingSoon
@@ -52,10 +60,11 @@ struct CountrySelectionView: View {
     private func select(_ country: Country) {
         switch country.availability {
         case .citySelection:
-            selectedCountry = country
+            registration.selectCountry(code: country.rawValue)
             showsCitySelection = true
         case .countrySelection:
             selectedCountry = country
+            registration.selectCountry(code: country.rawValue)
         case .comingSoon:
             break
         }
@@ -142,7 +151,7 @@ private enum Country: String, CaseIterable, Identifiable {
 
 #Preview {
     NavigationStack {
-        CountrySelectionView()
+        CountrySelectionView(registration: TripRegistrationViewModel())
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }
