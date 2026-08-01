@@ -9,6 +9,8 @@ import UIKit
 /// token safely falls back to the system font.
 enum CBTypography {
     enum Style: CaseIterable {
+        case title3
+
         case head1
         case head2
         case head3
@@ -35,7 +37,7 @@ enum CBTypography {
                 12
             case .head2, .subhead4, .body4:
                 16
-            case .head3, .subhead5, .body5:
+            case .title3, .head3, .subhead5, .body5:
                 20
             case .head4:
                 24
@@ -54,6 +56,8 @@ enum CBTypography {
 
         fileprivate var lineHeightRatio: CGFloat {
             switch self {
+            case .title3:
+                1.25
             case .head1, .head2, .head3, .head4, .head5:
                 1.3
             case .subhead1, .subhead2, .subhead3, .subhead4, .subhead5,
@@ -68,7 +72,7 @@ enum CBTypography {
                 .bold
             case .subhead1, .subhead2, .subhead3, .subhead4, .subhead5:
                 .semibold
-            case .body1, .body2, .body3, .body4, .body5, .caption1:
+            case .title3, .body1, .body2, .body3, .body4, .body5, .caption1:
                 .regular
             }
         }

@@ -15,10 +15,8 @@ struct RootView: View {
                     NavigationLink("Complete") { OnboardingCompleteView() }
                 }
                 Section("Trip Registration") {
-                    NavigationLink("Country Selection") { CountrySelectionView() }
-                    NavigationLink("Date Selection") { DateSelectionView() }
+                    NavigationLink("Registration Flow") { TripRegistrationFlowView() }
                     NavigationLink("Interest Selection") { InterestSelectionView() }
-                    NavigationLink("Summary") { TripSummaryView() }
                 }
                 Section("Timeline") {
                     NavigationLink("Home") { TimelineHomeView() }

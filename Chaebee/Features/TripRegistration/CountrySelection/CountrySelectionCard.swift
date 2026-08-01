@@ -9,13 +9,13 @@ struct CountrySelectionCard: View {
         case comingSoon
     }
 
-    private let name: LocalizedStringKey
+    private let name: LocalizedStringResource
     private let flag: ImageResource
     private let state: State
     private let action: () -> Void
 
     init(
-        name: LocalizedStringKey,
+        name: LocalizedStringResource,
         flag: ImageResource,
         state: State,
         action: @escaping () -> Void
@@ -40,7 +40,7 @@ struct CountrySelectionCard: View {
 }
 
 private struct CountrySelectionCardContent: View {
-    let name: LocalizedStringKey
+    let name: LocalizedStringResource
     let flag: ImageResource
     let state: CountrySelectionCard.State
 
@@ -117,12 +117,17 @@ private struct CountrySelectionCardStyle: ButtonStyle {
         let isPressed = previewIsPressed || configuration.isPressed
 
         configuration.label
-            .background(backgroundColor(isPressed: isPressed))
+            .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: CBRadius.large))
+            .overlay {
+                RoundedRectangle(cornerRadius: CBRadius.large)
+                    .fill(Color.black.opacity(isPressed ? 0.06 : 0))
+            }
             .overlay {
                 RoundedRectangle(cornerRadius: CBRadius.large)
                     .strokeBorder(borderColor, lineWidth: state == .selected ? 1.5 : 1)
             }
+            .scaleEffect(isPressed ? 0.95 : 1)
             .contentShape(RoundedRectangle(cornerRadius: CBRadius.large))
             .animation(
                 .easeOut(duration: CBAnimation.quickDuration),
@@ -130,12 +135,12 @@ private struct CountrySelectionCardStyle: ButtonStyle {
             )
     }
 
-    private func backgroundColor(isPressed: Bool) -> Color {
+    private var backgroundColor: Color {
         switch state {
         case .selected:
             CBColor.blue1
         case .selectable, .navigable:
-            isPressed ? CBColor.gray2 : Color.white
+            Color.white
         case .comingSoon:
             Color.white
         }
@@ -146,7 +151,7 @@ private struct CountrySelectionCardStyle: ButtonStyle {
     }
 }
 
-#Preview("Country card 5 variants") {
+#Preview("Country card states") {
     VStack(spacing: CBSpacing.medium) {
         CountrySelectionCard(
             name: "country.jp",
