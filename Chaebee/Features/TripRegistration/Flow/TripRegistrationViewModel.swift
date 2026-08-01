@@ -26,6 +26,11 @@ final class TripRegistrationViewModel: ObservableObject {
         draft.returnDate = date
     }
 
+    func resetDates() {
+        draft.departureDate = nil
+        draft.returnDate = nil
+    }
+
     func setPlansToBuyESIM(_ value: Bool) {
         draft.plansToBuyESIM = value
     }

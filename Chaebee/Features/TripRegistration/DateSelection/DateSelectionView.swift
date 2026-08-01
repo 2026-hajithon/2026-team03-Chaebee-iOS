@@ -59,6 +59,15 @@ struct DateSelectionView: View {
             selectionPhase = .returnDate
         case .returnDate:
             guard let departureDate, date >= departureDate else { return }
+
+            if Calendar.current.isDate(date, inSameDayAs: departureDate) {
+                self.departureDate = nil
+                returnDate = nil
+                registration.resetDates()
+                selectionPhase = .departure
+                return
+            }
+
             returnDate = date
             registration.selectReturnDate(date)
         }
@@ -158,7 +167,9 @@ private struct TripDateCalendar: View {
         accessibilityLabel: LocalizedStringResource,
         offset: Int
     ) -> some View {
-        Button {
+        let isEnabled = isMonthNavigationEnabled(offset: offset)
+
+        return Button {
             guard let month = Self.calendar.date(
                 byAdding: .month,
                 value: offset,
@@ -168,11 +179,23 @@ private struct TripDateCalendar: View {
         } label: {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(CBColor.blue5)
+                .foregroundStyle(isEnabled ? CBColor.blue5 : CBColor.gray3)
                 .frame(width: 36, height: 36)
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
         .accessibilityLabel(Text(accessibilityLabel))
+    }
+
+    private func isMonthNavigationEnabled(offset: Int) -> Bool {
+        guard offset < 0 else { return true }
+        guard let targetMonth = Self.calendar.date(
+            byAdding: .month,
+            value: offset,
+            to: displayedMonth
+        ) else { return false }
+
+        return targetMonth >= Self.startOfMonth(containing: Date())
     }
 
     private func dayCell(for date: Date) -> some View {
@@ -237,6 +260,9 @@ private struct TripDateCalendar: View {
     }
 
     private func isDateSelectable(_ date: Date) -> Bool {
+        let today = Self.calendar.startOfDay(for: Date())
+        guard date >= today else { return false }
+
         guard selectionPhase == .returnDate, let departureDate else { return true }
         return Self.calendar.compare(date, to: departureDate, toGranularity: .day) != .orderedAscending
     }
