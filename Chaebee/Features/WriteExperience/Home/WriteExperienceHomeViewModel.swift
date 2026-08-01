@@ -33,8 +33,8 @@ final class WriteExperienceHomeViewModel: ObservableObject {
         await load()
     }
 
-    func register(_ request: WriteExperienceRequest) async throws {
-        let newDiscoveries = try await repository.registerDiscovery(
+    func register(_ request: WriteExperienceRequest) {
+        let newDiscoveries = repository.registerDiscovery(
             request: request
         )
         discoveries.insert(contentsOf: newDiscoveries, at: 0)

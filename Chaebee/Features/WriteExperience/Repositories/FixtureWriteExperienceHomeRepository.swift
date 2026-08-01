@@ -1,6 +1,7 @@
 import Foundation
 
-actor FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
+@MainActor
+final class FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
     enum State: Equatable, Sendable {
         case populated
         case empty
@@ -21,11 +22,7 @@ actor FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
 
     func registerDiscovery(
         request: WriteExperienceRequest
-    ) async throws -> [TravelerDiscovery] {
-        guard let country = ExperienceCountry(rawValue: request.countryCode) else {
-            throw FixtureRepositoryError.unsupportedCountryCode
-        }
-
+    ) -> [TravelerDiscovery] {
         let createdAt = Date.now
         let newDiscoveries = request.discoveries.map { discovery in
             defer { nextLocalDiscoveryID -= 1 }
@@ -36,7 +33,7 @@ actor FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
                 authorAvatar: .blue,
                 createdAt: createdAt,
                 content: discovery.content,
-                country: country,
+                country: request.country,
                 tag: discovery.tag
             )
         }
@@ -77,13 +74,5 @@ actor FixtureWriteExperienceHomeRepository: WriteExperienceHomeRepository {
                 tag: .exchange
             )
         ]
-    }
-}
-
-private enum FixtureRepositoryError: LocalizedError {
-    case unsupportedCountryCode
-
-    var errorDescription: String? {
-        String(localized: "writeExperience.registration.error")
     }
 }

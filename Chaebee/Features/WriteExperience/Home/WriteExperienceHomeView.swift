@@ -35,7 +35,7 @@ struct WriteExperienceHomeView: View {
         .fullScreenCover(isPresented: $showsWriteExperience) {
             NavigationStack {
                 WriteExperienceInputView { request in
-                    try await viewModel.register(request)
+                    viewModel.register(request)
                     showRegistrationToast()
                 }
             }

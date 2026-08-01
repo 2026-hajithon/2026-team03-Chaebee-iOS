@@ -2012,13 +2012,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your discovery has been posted!"
+            "value" : "Your new discovery was successfully posted."
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "발견 등록이 완료되었어요!"
+            "value" : "새로운 발견이 정상적으로 등록되었어요."
           }
         }
       }

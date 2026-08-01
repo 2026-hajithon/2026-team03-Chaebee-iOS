@@ -50,16 +50,18 @@ struct ExperienceDraftDiscovery: Equatable, Identifiable, Sendable {
     }
 }
 
-struct WriteExperienceRequest: Encodable, Sendable {
+final class WriteExperienceRequest: Sendable {
     let cityID: Int
-    let countryCode: String
+    let country: ExperienceCountry
     let travelType: ExperienceTravelType
     let discoveries: [DiscoveryRequest]
 
-    struct DiscoveryRequest: Encodable, Sendable {
+    struct DiscoveryRequest: Sendable {
         let tag: PreparationTag
         let content: String
     }
+
+    var countryCode: String { country.rawValue }
 
     init?(draft: WriteExperienceDraft) {
         guard let location = draft.location,
@@ -69,7 +71,7 @@ struct WriteExperienceRequest: Encodable, Sendable {
         }
 
         cityID = location.id
-        countryCode = location.country.rawValue
+        country = location.country
         self.travelType = travelType
         discoveries = draft.discoveries.map {
             DiscoveryRequest(tag: $0.tag, content: $0.content)

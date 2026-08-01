@@ -8,13 +8,11 @@ struct WriteExperienceInputView: View {
     @State private var showsLocationSearch = false
     @State private var discoveryEditorRoute: DiscoveryEditorRoute?
     @State private var showsLimitToast = false
-    @State private var isSubmitting = false
-    @State private var submissionErrorMessage: String?
 
-    private let onSubmit: (WriteExperienceRequest) async throws -> Void
+    private let onSubmit: (WriteExperienceRequest) -> Void
 
     init(
-        onSubmit: @escaping (WriteExperienceRequest) async throws -> Void = { _ in }
+        onSubmit: @escaping (WriteExperienceRequest) -> Void = { _ in }
     ) {
         self.onSubmit = onSubmit
     }
@@ -23,13 +21,9 @@ struct WriteExperienceInputView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 WriteExperienceNavigationHeader(
-                    isNextEnabled: viewModel.canProceed && !isSubmitting,
-                    isLoading: isSubmitting,
+                    isNextEnabled: viewModel.canProceed,
                     actionTitle: "writeExperience.input.submit",
-                    onClose: {
-                        guard !isSubmitting else { return }
-                        dismiss()
-                    },
+                    onClose: { dismiss() },
                     onNext: proceed
                 )
 
@@ -49,7 +43,6 @@ struct WriteExperienceInputView: View {
         .scrollIndicators(.hidden)
         .background(CBColor.gray1)
         .toolbar(.hidden, for: .navigationBar)
-        .interactiveDismissDisabled(isSubmitting)
         .sheet(isPresented: $showsLocationSearch) {
             ExperienceLocationSearchView { location in
                 viewModel.selectLocation(location)
@@ -70,17 +63,7 @@ struct WriteExperienceInputView: View {
             .presentationDragIndicator(.visible)
         }
         .overlay(alignment: .bottom) {
-            if let submissionErrorMessage {
-                feedbackToast(
-                    message: submissionErrorMessage,
-                    systemImage: "exclamationmark.triangle.fill",
-                    iconColor: CBColor.yellow
-                )
-                    .padding(.horizontal, CBSpacing.pageHorizontal)
-                    .padding(.bottom, CBSpacing.large)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .zIndex(1)
-            } else if showsLimitToast {
+            if showsLimitToast {
                 feedbackToast(
                     message: String(localized: "writeExperience.discovery.limit"),
                     systemImage: "exclamationmark.triangle.fill",
@@ -267,20 +250,9 @@ struct WriteExperienceInputView: View {
     }
 
     private func proceed() {
-        guard !isSubmitting, let request = viewModel.makeRequest() else { return }
-
-        submissionErrorMessage = nil
-        isSubmitting = true
-
-        Task { @MainActor in
-            do {
-                try await onSubmit(request)
-                dismiss()
-            } catch {
-                submissionErrorMessage = error.localizedDescription
-                isSubmitting = false
-            }
-        }
+        guard let request = viewModel.makeRequest() else { return }
+        onSubmit(request)
+        dismiss()
     }
 
     private func locationDisplayName(_ location: ExperienceLocation) -> String {
