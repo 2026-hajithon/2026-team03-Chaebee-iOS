@@ -2,7 +2,7 @@ import Foundation
 
 struct TripRegistrationDraft: Equatable {
     var countryCode: String?
-    var cityID: String?
+    var cityCode: String?
     var departureDate: Date?
     var returnDate: Date?
     var plansToBuyESIM: Bool?
@@ -10,6 +10,7 @@ struct TripRegistrationDraft: Equatable {
 
     var isComplete: Bool {
         countryCode != nil
+            && cityCode != nil
             && departureDate != nil
             && returnDate != nil
             && plansToBuyESIM != nil

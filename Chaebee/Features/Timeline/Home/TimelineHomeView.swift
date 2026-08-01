@@ -5,8 +5,8 @@ struct TimelineHomeView: View {
     @StateObject private var viewModel: TimelineHomeViewModel
 
     init(
-        tripID: Int = 12,
-        repository: any PreparationTimelineRepository = FixturePreparationTimelineRepository()
+        tripID: Int,
+        repository: any PreparationTimelineRepository
     ) {
         _viewModel = StateObject(
             wrappedValue: TimelineHomeViewModel(
@@ -96,7 +96,7 @@ struct TimelineHomeView: View {
                 .cbTypography(.head3)
                 .foregroundStyle(CBColor.gray9)
 
-            Text(verbatim: "D-\(timeline.dDay)")
+            Text(verbatim: dayLabel(timeline.dDay))
                 .cbTypography(.subhead1)
                 .foregroundStyle(Color.white)
                 .padding(.horizontal, CBSpacing.small)
@@ -104,6 +104,11 @@ struct TimelineHomeView: View {
                 .background(CBColor.blue5)
                 .clipShape(RoundedRectangle(cornerRadius: CBRadius.small))
         }
+    }
+
+    private func dayLabel(_ dDay: Int) -> String {
+        if dDay == 0 { return "D-Day" }
+        return "D-\(abs(dDay))"
     }
 
     private var backButton: some View {
@@ -148,6 +153,7 @@ struct TimelineHomeView: View {
 #Preview("Singapore") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .singapore)
         )
     }
@@ -157,6 +163,7 @@ struct TimelineHomeView: View {
 #Preview("Los Angeles") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .losAngeles)
         )
     }
@@ -166,6 +173,7 @@ struct TimelineHomeView: View {
 #Preview("Taiwan") {
     NavigationStack {
         TimelineHomeView(
+            tripID: 12,
             repository: FixturePreparationTimelineRepository(destination: .taiwan)
         )
     }

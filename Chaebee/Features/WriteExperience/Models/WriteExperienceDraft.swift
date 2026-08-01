@@ -18,7 +18,7 @@ struct ExperienceLocation: Equatable, Identifiable, Sendable {
 
 enum ExperienceTravelType: String, CaseIterable, Codable, Identifiable, Sendable {
     case solo = "SOLO"
-    case friends = "FRIENDS"
+    case friends = "FRIEND"
     case couple = "COUPLE"
     case family = "FAMILY"
     case group = "GROUP"
@@ -51,7 +51,7 @@ struct ExperienceDraftDiscovery: Equatable, Identifiable, Sendable {
 }
 
 final class WriteExperienceRequest: Sendable {
-    let cityID: Int
+    let tripID: Int
     let country: ExperienceCountry
     let travelType: ExperienceTravelType
     let discoveries: [DiscoveryRequest]
@@ -70,7 +70,7 @@ final class WriteExperienceRequest: Sendable {
             return nil
         }
 
-        cityID = location.id
+        tripID = location.id
         country = location.country
         self.travelType = travelType
         discoveries = draft.discoveries.map {

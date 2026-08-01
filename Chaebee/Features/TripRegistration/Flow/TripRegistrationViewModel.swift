@@ -4,17 +4,20 @@ import Foundation
 @MainActor
 final class TripRegistrationViewModel: ObservableObject {
     @Published private(set) var draft = TripRegistrationDraft()
+    @Published private(set) var isSubmitting = false
+    @Published private(set) var registeredTrip: RegisteredTrip?
+    @Published private(set) var submissionErrorMessage: String?
 
     var canSubmit: Bool { draft.isComplete }
 
-    func selectCountry(code: String) {
+    func selectCountry(code: String, defaultCityCode: String? = nil) {
         guard draft.countryCode != code else { return }
         draft.countryCode = code
-        draft.cityID = nil
+        draft.cityCode = defaultCityCode
     }
 
-    func selectCity(id: String) {
-        draft.cityID = id
+    func selectCity(code: String) {
+        draft.cityCode = code
     }
 
     func selectDepartureDate(_ date: Date) {
@@ -43,7 +46,20 @@ final class TripRegistrationViewModel: ObservableObject {
         try TripRegistrationRequest(draft: draft)
     }
 
-    func submit(using repository: any TripRegistrationRepository) async throws {
-        try await repository.createTrip(makeRequest())
+    func submit(using repository: any TripRegistrationRepository) async {
+        guard !isSubmitting else { return }
+
+        isSubmitting = true
+        submissionErrorMessage = nil
+
+        do {
+            registeredTrip = try await repository.createTrip(makeRequest())
+        } catch let error as APIError {
+            submissionErrorMessage = error.errorDescription
+        } catch {
+            submissionErrorMessage = String(localized: "tripRegistration.registration.error")
+        }
+
+        isSubmitting = false
     }
 }

@@ -4,8 +4,6 @@ import SwiftUI
 import UIKit
 
 struct ProfileSettingsView: View {
-    @AppStorage("chaebee.hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @AppStorage("chaebee.isLoggedIn") private var isLoggedIn = false
     @StateObject private var viewModel: ProfileSettingsViewModel
     @State private var isPhotoActionsPresented = false
     @State private var selectedPhoto: PhotosPickerItem?
@@ -13,9 +11,17 @@ struct ProfileSettingsView: View {
     @State private var isCameraUnavailablePresented = false
     @State private var isProfileEditPresented = false
     @State private var accountAlert: AccountAlert?
+    private let onLogout: () -> Void
+    private let discoveryRepository: any WriteExperienceHomeRepository
 
-    init(viewModel: ProfileSettingsViewModel? = nil) {
+    init(
+        viewModel: ProfileSettingsViewModel? = nil,
+        discoveryRepository: (any WriteExperienceHomeRepository)? = nil,
+        onLogout: @escaping () -> Void = {}
+    ) {
         _viewModel = StateObject(wrappedValue: viewModel ?? ProfileSettingsViewModel())
+        self.discoveryRepository = discoveryRepository ?? FixtureWriteExperienceHomeRepository()
+        self.onLogout = onLogout
     }
 
     var body: some View {
@@ -73,8 +79,7 @@ struct ProfileSettingsView: View {
                     title: Text("profile.logout.confirm.title"),
                     message: Text("profile.logout.confirm.message"),
                     primaryButton: .destructive(Text("profile.logout")) {
-                        isLoggedIn = false
-                        hasCompletedOnboarding = false
+                        onLogout()
                     },
                     secondaryButton: .cancel(Text("common.cancel"))
                 )
@@ -97,7 +102,11 @@ struct ProfileSettingsView: View {
                 Button {
                     isPhotoActionsPresented = true
                 } label: {
-                    ProfileAvatarView(imageData: viewModel.profile.avatarData, size: 44)
+                    ProfileAvatarView(
+                        imageData: viewModel.profile.avatarData,
+                        avatarColor: viewModel.profile.avatarColor,
+                        size: 44
+                    )
                 }
                 .buttonStyle(.plain)
 
@@ -138,7 +147,7 @@ struct ProfileSettingsView: View {
             sectionTitle("profile.section.activity")
 
             NavigationLink {
-                MyExperiencesView()
+                MyExperiencesView(repository: discoveryRepository)
             } label: {
                 settingsRow("profile.registeredDiscoveries")
                     .clipShape(

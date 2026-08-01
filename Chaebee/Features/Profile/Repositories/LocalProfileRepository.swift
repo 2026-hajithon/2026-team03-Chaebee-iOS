@@ -3,8 +3,10 @@ import Foundation
 final class LocalProfileRepository: ProfileRepository {
     private enum Key {
         static let avatarFileName = "profile.avatarFileName"
+        static let memberID = "profile.memberID"
         static let nickname = "profile.nickname"
         static let email = "profile.email"
+        static let avatarColor = "profile.avatarColor"
     }
 
     private let userDefaults: UserDefaults
@@ -25,8 +27,34 @@ final class LocalProfileRepository: ProfileRepository {
                 ?? String(localized: "profile.fixture.nickname"),
             email: userDefaults.string(forKey: Key.email)
                 ?? "chicken.banana@mail.com",
+            avatarColor: resolvedAvatarColor(),
             avatarData: loadAvatarData()
         )
+    }
+
+    func syncAuthenticatedProfile(
+        memberID: Int,
+        nickname: String,
+        email: String
+    ) -> UserProfile {
+        let storedMemberID = userDefaults.object(forKey: Key.memberID) as? Int
+
+        if storedMemberID != memberID {
+            userDefaults.set(memberID, forKey: Key.memberID)
+            userDefaults.set(nickname, forKey: Key.nickname)
+            userDefaults.set(email, forKey: Key.email)
+            assignRandomAvatarColor()
+            removeAvatarData()
+        } else {
+            if userDefaults.string(forKey: Key.nickname) == nil {
+                userDefaults.set(nickname, forKey: Key.nickname)
+            }
+            if userDefaults.string(forKey: Key.email) == nil {
+                userDefaults.set(email, forKey: Key.email)
+            }
+        }
+
+        return fetchProfile()
     }
 
     func updateProfile(nickname: String, email: String) -> UserProfile {
@@ -54,6 +82,22 @@ final class LocalProfileRepository: ProfileRepository {
         }
 
         return try? Data(contentsOf: fileURL)
+    }
+
+    private func resolvedAvatarColor() -> ExperienceAvatar {
+        if let rawValue = userDefaults.string(forKey: Key.avatarColor),
+           let color = ExperienceAvatar(rawValue: rawValue) {
+            return color
+        }
+
+        return assignRandomAvatarColor()
+    }
+
+    @discardableResult
+    private func assignRandomAvatarColor() -> ExperienceAvatar {
+        let color = ExperienceAvatar.allCases.randomElement() ?? .blue
+        userDefaults.set(color.rawValue, forKey: Key.avatarColor)
+        return color
     }
 
     private func saveAvatarData(_ data: Data) {

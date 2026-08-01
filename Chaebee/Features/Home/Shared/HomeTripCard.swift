@@ -64,15 +64,17 @@ struct HomeTripCard: View {
                 .foregroundStyle(CBColor.gray8)
                 .lineLimit(2)
 
-            Text(
-                verbatim: String(
-                    format: String(localized: "home.trip.progress"),
-                    trip.progressPercent
+            if trip.totalCount > 0 {
+                Text(
+                    verbatim: String(
+                        format: String(localized: "home.trip.progress"),
+                        trip.progressPercent
+                    )
                 )
-            )
-            .cbTypography(.subhead2)
-            .foregroundStyle(CBColor.blue5)
-            .padding(.top, CBSpacing.xSmall)
+                .cbTypography(.subhead2)
+                .foregroundStyle(CBColor.blue5)
+                .padding(.top, CBSpacing.xSmall)
+            }
         }
         .padding(CBSpacing.medium)
         .frame(

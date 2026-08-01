@@ -60,11 +60,17 @@ struct CountrySelectionView: View {
     private func select(_ country: Country) {
         switch country.availability {
         case .citySelection:
-            registration.selectCountry(code: country.rawValue)
+            registration.selectCountry(
+                code: country.apiCode,
+                defaultCityCode: country.defaultCityCode
+            )
             showsCitySelection = true
         case .countrySelection:
             selectedCountry = country
-            registration.selectCountry(code: country.rawValue)
+            registration.selectCountry(
+                code: country.apiCode,
+                defaultCityCode: country.defaultCityCode
+            )
         case .comingSoon:
             break
         }
@@ -102,6 +108,31 @@ private enum Country: String, CaseIterable, Identifiable {
     }
 
     var id: String { rawValue }
+
+    var apiCode: String {
+        switch self {
+        case .us: "USA"
+        case .tw: "TAIWAN"
+        case .sg: "SINGAPORE"
+        case .jp: "JAPAN"
+        case .br: "BRAZIL"
+        case .au: "AUSTRALIA"
+        case .th: "THAILAND"
+        case .vn: "VIETNAM"
+        case .hk: "HONGKONG"
+        case .fr: "FRANCE"
+        case .uk: "UNITED_KINGDOM"
+        case .de: "GERMANY"
+        }
+    }
+
+    var defaultCityCode: String? {
+        switch self {
+        case .tw: "TAIPEI"
+        case .sg: "SINGAPORE_CITY"
+        default: nil
+        }
+    }
 
     var name: LocalizedStringResource {
         switch self {

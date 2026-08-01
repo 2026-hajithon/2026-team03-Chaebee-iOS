@@ -5,12 +5,12 @@ struct TravelerDiscovery: Codable, Equatable, Identifiable, Sendable {
     let authorName: String
     let authorAvatar: ExperienceAvatar
     let createdAt: Date
-    let content: String
+    let content: String?
     let country: ExperienceCountry
-    let tag: PreparationTag
+    let tag: PreparationTag?
 }
 
-enum ExperienceAvatar: String, Codable, Equatable, Sendable {
+enum ExperienceAvatar: String, Codable, CaseIterable, Equatable, Sendable {
     case blue
     case green
     case indigo

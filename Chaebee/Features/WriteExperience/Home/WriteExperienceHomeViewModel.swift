@@ -7,6 +7,7 @@ final class WriteExperienceHomeViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
     @Published private(set) var currentUserAvatarData: Data?
+    @Published private(set) var currentUserAvatarColor: ExperienceAvatar
 
     private let repository: any WriteExperienceHomeRepository
     private let profileRepository: ProfileRepository
@@ -18,7 +19,9 @@ final class WriteExperienceHomeViewModel: ObservableObject {
     ) {
         self.repository = repository
         self.profileRepository = profileRepository ?? LocalProfileRepository()
-        currentUserAvatarData = self.profileRepository.fetchProfile().avatarData
+        let profile = self.profileRepository.fetchProfile()
+        currentUserAvatarData = profile.avatarData
+        currentUserAvatarColor = profile.avatarColor
     }
 
     func load() async {
@@ -40,16 +43,28 @@ final class WriteExperienceHomeViewModel: ObservableObject {
         await load()
     }
 
-    func register(_ request: WriteExperienceRequest) {
-        currentUserAvatarData = profileRepository.fetchProfile().avatarData
+    func register(_ request: WriteExperienceRequest) async -> Bool {
+        let profile = profileRepository.fetchProfile()
+        currentUserAvatarData = profile.avatarData
+        currentUserAvatarColor = profile.avatarColor
 
-        let newDiscoveries = repository.registerDiscovery(
-            request: request
-        )
-        discoveries.insert(contentsOf: newDiscoveries, at: 0)
+        do {
+            let newDiscoveries = try await repository.registerDiscovery(
+                request: request
+            )
+            discoveries.insert(contentsOf: newDiscoveries, at: 0)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 
     func avatarData(for discovery: TravelerDiscovery) -> Data? {
         discovery.id < 0 ? currentUserAvatarData : nil
+    }
+
+    func avatarColor(for discovery: TravelerDiscovery) -> ExperienceAvatar? {
+        discovery.id < 0 ? currentUserAvatarColor : nil
     }
 }

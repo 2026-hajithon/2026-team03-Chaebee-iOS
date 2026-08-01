@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    let onLogin: () -> Void
+    let isLoading: Bool
+    let errorMessage: String?
+    let onGoogleLogin: () -> Void
+    let onAppleLogin: () -> Void
     let onContinueAsGuest: () -> Void
 
     var body: some View {
@@ -40,12 +43,17 @@ struct WelcomeView: View {
 
     private var loginButtons: some View {
         VStack(spacing: CBSpacing.small) {
-            Button(action: onLogin) {
+            Button(action: onGoogleLogin) {
                 HStack(spacing: CBSpacing.small) {
-                    Image(.googleLogin)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
+                    if isLoading {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Image(.googleLogin)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                    }
                     Text("onboarding.login.google")
                         .cbTypography(.body3)
                         .foregroundStyle(CBColor.gray9)
@@ -59,8 +67,9 @@ struct WelcomeView: View {
                 }
             }
             .buttonStyle(.plain)
+            .disabled(isLoading)
 
-            Button(action: onLogin) {
+            Button(action: onAppleLogin) {
                 HStack(spacing: CBSpacing.small) {
                     Image(systemName: "apple.logo")
                     Text("onboarding.login.apple")
@@ -72,6 +81,7 @@ struct WelcomeView: View {
                 .background(Color.black, in: RoundedRectangle(cornerRadius: CBRadius.small))
             }
             .buttonStyle(.plain)
+            .disabled(isLoading)
 
             Button(action: onContinueAsGuest) {
                 Text("onboarding.login.guest")
@@ -81,11 +91,27 @@ struct WelcomeView: View {
                     .frame(height: 36)
             }
             .buttonStyle(.plain)
+            .disabled(isLoading)
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .cbTypography(.caption1)
+                    .foregroundStyle(CBColor.red)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel(Text("onboarding.login.error.accessibility"))
+            }
         }
     }
 }
 
 #Preview {
-    WelcomeView(onLogin: {}, onContinueAsGuest: {})
+    WelcomeView(
+        isLoading: false,
+        errorMessage: nil,
+        onGoogleLogin: {},
+        onAppleLogin: {},
+        onContinueAsGuest: {}
+    )
         .environment(\.locale, Locale(identifier: "ko"))
 }

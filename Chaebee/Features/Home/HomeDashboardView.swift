@@ -4,11 +4,15 @@ struct HomeDashboardView: View {
     @StateObject private var viewModel: HomeDashboardViewModel
     @State private var isEditingTrips = false
     @State private var pendingTripDeletion: HomeTripSummary?
+    @State private var showsTripRegistration = false
+    private let timelineRepository: any PreparationTimelineRepository
 
     init(
-        repository: (any HomeDashboardRepository)? = nil
+        repository: (any HomeDashboardRepository)? = nil,
+        timelineRepository: any PreparationTimelineRepository
     ) {
         let resolvedRepository = repository ?? FixtureHomeDashboardRepository()
+        self.timelineRepository = timelineRepository
         _viewModel = StateObject(
             wrappedValue: HomeDashboardViewModel(repository: resolvedRepository)
         )
@@ -27,9 +31,28 @@ struct HomeDashboardView: View {
             }
         }
         .background(CBColor.gray1)
+        .overlay {
+            if pendingTripDeletion != nil {
+                Color.black.opacity(0.6)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
+        .animation(
+            .easeInOut(duration: CBAnimation.quickDuration),
+            value: pendingTripDeletion != nil
+        )
         .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
+        }
+        .fullScreenCover(isPresented: $showsTripRegistration, onDismiss: {
+            Task { await viewModel.retry() }
+        }) {
+            NavigationStack {
+                TripRegistrationFlowView()
+            }
         }
         .confirmationDialog(
             "home.deleteTrip.title",
@@ -56,6 +79,19 @@ struct HomeDashboardView: View {
         } message: {
             Text("home.deleteTrip.message")
         }
+        .alert(
+            "home.deleteTrip.error.title",
+            isPresented: Binding(
+                get: { viewModel.dashboard != nil && viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.dismissError() } }
+            )
+        ) {
+            Button("common.confirm") {
+                viewModel.dismissError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
     }
 
     private func dashboardContent(_ dashboard: HomeDashboard) -> some View {
@@ -66,7 +102,9 @@ struct HomeDashboardView: View {
                 if dashboard.hasRegisteredTrip {
                     registeredTripsSection(dashboard.trips)
                 } else {
-                    EmptyTripCard()
+                    EmptyTripCard {
+                        showsTripRegistration = true
+                    }
                         .padding(.top, CBSpacing.large)
                 }
 
@@ -119,8 +157,8 @@ struct HomeDashboardView: View {
                 }
             }
 
-            NavigationLink {
-                TripRegistrationFlowView()
+            Button {
+                showsTripRegistration = true
             } label: {
                 Text("home.addTrip")
                     .cbTypography(.head2)
@@ -155,9 +193,7 @@ struct HomeDashboardView: View {
             NavigationLink {
                 TimelineHomeView(
                     tripID: trip.id,
-                    repository: FixturePreparationTimelineRepository(
-                        destination: trip.timelineDestination
-                    )
+                    repository: timelineRepository
                 )
             } label: {
                 HomeTripCard(trip: trip, layout: layout)
@@ -199,7 +235,8 @@ struct HomeDashboardView: View {
 #Preview("Registered") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .registered)
+            repository: FixtureHomeDashboardRepository(state: .registered),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))
@@ -208,7 +245,8 @@ struct HomeDashboardView: View {
 #Preview("Empty") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .empty)
+            repository: FixtureHomeDashboardRepository(state: .empty),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))
@@ -217,7 +255,8 @@ struct HomeDashboardView: View {
 #Preview("Single Trip") {
     NavigationStack {
         HomeDashboardView(
-            repository: FixtureHomeDashboardRepository(state: .singleTrip)
+            repository: FixtureHomeDashboardRepository(state: .singleTrip),
+            timelineRepository: FixturePreparationTimelineRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))

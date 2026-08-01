@@ -2,21 +2,52 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selection: MainTab = .home
+    let homeDashboardRepository: any HomeDashboardRepository
+    let preparationTimelineRepository: any PreparationTimelineRepository
+    let writeExperienceRepository: any WriteExperienceHomeRepository
+    let myDiscoveriesRepository: any WriteExperienceHomeRepository
+    let experienceLocationRepository: any ExperienceLocationRepository
+    let onLogout: () -> Void
+
+    init(
+        homeDashboardRepository: any HomeDashboardRepository,
+        preparationTimelineRepository: any PreparationTimelineRepository,
+        writeExperienceRepository: any WriteExperienceHomeRepository,
+        myDiscoveriesRepository: (any WriteExperienceHomeRepository)? = nil,
+        experienceLocationRepository: any ExperienceLocationRepository,
+        onLogout: @escaping () -> Void = {}
+    ) {
+        self.homeDashboardRepository = homeDashboardRepository
+        self.preparationTimelineRepository = preparationTimelineRepository
+        self.writeExperienceRepository = writeExperienceRepository
+        self.myDiscoveriesRepository = myDiscoveriesRepository ?? writeExperienceRepository
+        self.experienceLocationRepository = experienceLocationRepository
+        self.onLogout = onLogout
+    }
 
     var body: some View {
         ZStack {
             NavigationStack {
-                HomeDashboardView()
+                HomeDashboardView(
+                    repository: homeDashboardRepository,
+                    timelineRepository: preparationTimelineRepository
+                )
             }
             .tabContentState(isSelected: selection == .home)
 
             NavigationStack {
-                WriteExperienceHomeView()
+                WriteExperienceHomeView(
+                    repository: writeExperienceRepository,
+                    locationRepository: experienceLocationRepository
+                )
             }
             .tabContentState(isSelected: selection == .writeDiscovery)
 
             NavigationStack {
-                ProfileSettingsView()
+                ProfileSettingsView(
+                    discoveryRepository: myDiscoveriesRepository,
+                    onLogout: onLogout
+                )
             }
             .tabContentState(isSelected: selection == .more)
         }
@@ -60,6 +91,11 @@ enum MainTab: Hashable, CaseIterable {
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(
+        homeDashboardRepository: FixtureHomeDashboardRepository(),
+        preparationTimelineRepository: FixturePreparationTimelineRepository(),
+        writeExperienceRepository: FixtureWriteExperienceHomeRepository(),
+        experienceLocationRepository: FixtureExperienceLocationRepository()
+    )
         .environment(\.locale, Locale(identifier: "ko"))
 }

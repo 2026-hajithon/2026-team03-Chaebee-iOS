@@ -12,6 +12,7 @@ extension PreparationTag {
         case .adapter: .adapter
         case .esimRoaming: .simCard
         case .entryForm: .documentAndPen
+        case .flight: .flight
         case .flightBoarding: .boardingPass
         case .localAirport: .destination
         case .accommodationCheckin: .accommodation

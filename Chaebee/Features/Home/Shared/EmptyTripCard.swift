@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct EmptyTripCard: View {
+    let onRegister: () -> Void
+
+    init(onRegister: @escaping () -> Void = {}) {
+        self.onRegister = onRegister
+    }
+
     var body: some View {
         VStack(spacing: CBSpacing.large) {
             HStack(alignment: .center, spacing: CBSpacing.medium) {
@@ -23,9 +29,7 @@ struct EmptyTripCard: View {
                     .accessibilityHidden(true)
             }
 
-            NavigationLink {
-                TripRegistrationFlowView()
-            } label: {
+            Button(action: onRegister) {
                 Text("home.registerTrip")
                     .cbTypography(.head2)
                     .foregroundStyle(Color.white)

@@ -53,7 +53,7 @@ final class FixtureHomeDashboardRepository: HomeDashboardRepository {
         ]
     }
 
-    private var discoveries: [HomeDiscoverySummary] {
+    nonisolated static var discoveryFixtures: [HomeDiscoverySummary] {
         [
             HomeDiscoverySummary(
                 id: 1,
@@ -80,5 +80,9 @@ final class FixtureHomeDashboardRepository: HomeDashboardRepository {
                 content: "마일리지 번호가 등록되어 있는지 한 번 더 확인하면 적립 누락을 줄일 수 있어요."
             )
         ]
+    }
+
+    private var discoveries: [HomeDiscoverySummary] {
+        Self.discoveryFixtures
     }
 }

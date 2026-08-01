@@ -3,6 +3,7 @@ import SwiftUI
 struct TravelerDiscoveryCard: View {
     let discovery: TravelerDiscovery
     var avatarData: Data?
+    var avatarColor: ExperienceAvatar?
 
     var body: some View {
         VStack(alignment: .leading, spacing: CBSpacing.medium) {
@@ -22,10 +23,12 @@ struct TravelerDiscoveryCard: View {
                 Spacer()
             }
 
-            Text(verbatim: discovery.content)
-                .cbTypography(.body4)
-                .foregroundStyle(CBColor.gray8)
-                .fixedSize(horizontal: false, vertical: true)
+            if let content = discovery.content, !content.isEmpty {
+                Text(verbatim: content)
+                    .cbTypography(.body4)
+                    .foregroundStyle(CBColor.gray8)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             HStack(spacing: CBSpacing.small) {
                 ExperienceCountryTag(
@@ -33,11 +36,13 @@ struct TravelerDiscoveryCard: View {
                     flag: discovery.country.flagResource
                 )
 
-                ExperienceKeywordChip(
-                    title: discovery.tag.localizedName,
-                    icon: discovery.tag.iconResource,
-                    state: .selectable
-                )
+                if let tag = discovery.tag {
+                    ExperienceKeywordChip(
+                        title: tag.localizedName,
+                        icon: tag.iconResource,
+                        state: .selectable
+                    )
+                }
             }
         }
         .padding(CBSpacing.medium)
@@ -55,7 +60,7 @@ struct TravelerDiscoveryCard: View {
                 .frame(width: 36, height: 36)
                 .clipShape(Circle())
         } else {
-            Image(discovery.authorAvatar.imageResource)
+            Image((avatarColor ?? discovery.authorAvatar).imageResource)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 36, height: 36)

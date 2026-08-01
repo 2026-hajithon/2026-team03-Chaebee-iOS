@@ -5,12 +5,16 @@ struct WriteExperienceHomeView: View {
     @State private var showsWriteExperience = false
     @State private var showsRegistrationToast = false
     @State private var registrationToastTask: Task<Void, Never>?
+    private let locationRepository: any ExperienceLocationRepository
 
-    init(repository: (any WriteExperienceHomeRepository)? = nil) {
-        let resolvedRepository = repository ?? FixtureWriteExperienceHomeRepository()
+    init(
+        repository: any WriteExperienceHomeRepository,
+        locationRepository: any ExperienceLocationRepository
+    ) {
+        self.locationRepository = locationRepository
         _viewModel = StateObject(
             wrappedValue: WriteExperienceHomeViewModel(
-                repository: resolvedRepository
+                repository: repository
             )
         )
     }
@@ -34,9 +38,14 @@ struct WriteExperienceHomeView: View {
         }
         .fullScreenCover(isPresented: $showsWriteExperience) {
             NavigationStack {
-                WriteExperienceInputView { request in
-                    viewModel.register(request)
-                    showRegistrationToast()
+                WriteExperienceInputView(
+                    locationRepository: locationRepository
+                ) { request in
+                    Task {
+                        if await viewModel.register(request) {
+                            showRegistrationToast()
+                        }
+                    }
                 }
             }
         }
@@ -69,7 +78,8 @@ struct WriteExperienceHomeView: View {
                         ForEach(viewModel.discoveries) { discovery in
                             TravelerDiscoveryCard(
                                 discovery: discovery,
-                                avatarData: viewModel.avatarData(for: discovery)
+                                avatarData: viewModel.avatarData(for: discovery),
+                                avatarColor: viewModel.avatarColor(for: discovery)
                             )
                         }
                     }
@@ -210,7 +220,10 @@ struct WriteExperienceHomeView: View {
 
 #Preview {
     NavigationStack {
-        WriteExperienceHomeView()
+        WriteExperienceHomeView(
+            repository: FixtureWriteExperienceHomeRepository(),
+            locationRepository: FixtureExperienceLocationRepository()
+        )
     }
     .environment(\.locale, Locale(identifier: "ko"))
 }
@@ -218,7 +231,8 @@ struct WriteExperienceHomeView: View {
 #Preview("Empty") {
     NavigationStack {
         WriteExperienceHomeView(
-            repository: FixtureWriteExperienceHomeRepository(state: .empty)
+            repository: FixtureWriteExperienceHomeRepository(state: .empty),
+            locationRepository: FixtureExperienceLocationRepository()
         )
     }
     .environment(\.locale, Locale(identifier: "ko"))

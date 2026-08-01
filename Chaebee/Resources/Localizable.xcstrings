@@ -311,6 +311,40 @@
         }
       }
     },
+    "country.ca" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canada"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캐나다"
+          }
+        }
+      }
+    },
+    "country.cn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "China"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중국"
+          }
+        }
+      }
+    },
     "country.de" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -324,6 +358,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "독일"
+          }
+        }
+      }
+    },
+    "country.es" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spain"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스페인"
           }
         }
       }
@@ -362,6 +413,57 @@
         }
       }
     },
+    "country.id" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indonesia"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인도네시아"
+          }
+        }
+      }
+    },
+    "country.in" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "India"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인도"
+          }
+        }
+      }
+    },
+    "country.it" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italy"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이탈리아"
+          }
+        }
+      }
+    },
     "country.jp" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -375,6 +477,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "일본"
+          }
+        }
+      }
+    },
+    "country.mx" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mexico"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "멕시코"
+          }
+        }
+      }
+    },
+    "country.my" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malaysia"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말레이시아"
+          }
+        }
+      }
+    },
+    "country.nz" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Zealand"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뉴질랜드"
+          }
+        }
+      }
+    },
+    "country.ph" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Philippines"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필리핀"
           }
         }
       }
@@ -520,6 +690,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "여행 삭제"
+          }
+        }
+      }
+    },
+    "home.deleteTrip.error.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t delete the trip"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행을 삭제하지 못했어요"
           }
         }
       }
@@ -722,6 +909,23 @@
         }
       }
     },
+    "home.trip.titleFormat" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ trip"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 여행"
+          }
+        }
+      }
+    },
     "Interest Selection" : {
       "comment" : "A label displayed above a list of interests.",
       "isCommentAutoGenerated" : true
@@ -802,6 +1006,91 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple로 로그인"
+          }
+        }
+      }
+    },
+    "onboarding.login.error.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login error"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인 오류"
+          }
+        }
+      }
+    },
+    "onboarding.login.error.appleUnavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple sign-in is not available yet."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 로그인은 아직 준비 중이에요."
+          }
+        }
+      }
+    },
+    "onboarding.login.error.configuration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google sign-in configuration is missing."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 로그인 설정을 확인해 주세요."
+          }
+        }
+      }
+    },
+    "onboarding.login.error.presentation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to open the Google sign-in screen."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 로그인 화면을 열 수 없어요."
+          }
+        }
+      }
+    },
+    "onboarding.login.error.token" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google did not return a valid ID token."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 인증 토큰을 가져오지 못했어요."
           }
         }
       }
@@ -1146,6 +1435,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "#환전"
+          }
+        }
+      }
+    },
+    "preparationTag.flight" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flight"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "항공"
           }
         }
       }
@@ -2196,6 +2502,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "eSIM을 구매할 계획이 있나요?"
+          }
+        }
+      }
+    },
+    "tripRegistration.registration.error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't register your trip. Please try again."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행을 등록하지 못했어요. 다시 시도해 주세요."
           }
         }
       }

@@ -34,7 +34,7 @@ struct CitySelectionView: View {
     private func select(_ city: City) {
         guard city.availability == .selectable else { return }
         selectedCity = city
-        registration.selectCity(id: city.rawValue)
+        registration.selectCity(code: city.apiCode)
     }
 
     private func state(for city: City) -> CitySelectionButton.State {
@@ -65,6 +65,14 @@ private enum City: String, CaseIterable, Identifiable {
     }
 
     var id: String { rawValue }
+
+    var apiCode: String {
+        switch self {
+        case .losAngeles: "LOS_ANGELES"
+        case .newYork: "NEW_YORK"
+        case .honolulu: "HONOLULU"
+        }
+    }
 
     var name: LocalizedStringResource {
         switch self {

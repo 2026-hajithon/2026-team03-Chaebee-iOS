@@ -10,10 +10,13 @@ struct WriteExperienceInputView: View {
     @State private var showsLimitToast = false
 
     private let onSubmit: (WriteExperienceRequest) -> Void
+    private let locationRepository: any ExperienceLocationRepository
 
     init(
+        locationRepository: any ExperienceLocationRepository = FixtureExperienceLocationRepository(),
         onSubmit: @escaping (WriteExperienceRequest) -> Void = { _ in }
     ) {
+        self.locationRepository = locationRepository
         self.onSubmit = onSubmit
     }
 
@@ -44,7 +47,7 @@ struct WriteExperienceInputView: View {
         .background(CBColor.gray1)
         .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showsLocationSearch) {
-            ExperienceLocationSearchView { location in
+            ExperienceLocationSearchView(repository: locationRepository) { location in
                 viewModel.selectLocation(location)
                 locationText = locationDisplayName(location)
             }

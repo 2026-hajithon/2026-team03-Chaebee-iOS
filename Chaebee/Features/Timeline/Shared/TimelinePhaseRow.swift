@@ -71,6 +71,7 @@ struct TimelinePhaseRow: View {
         .overlay {
             RoundedRectangle(cornerRadius: CBRadius.medium)
                 .stroke(phase.isCurrent ? CBColor.blue5 : CBColor.gray3, lineWidth: phase.isCurrent ? 2 : 1)
+                .allowsHitTesting(false)
         }
         .padding(.bottom, CBSpacing.large)
     }
@@ -80,6 +81,12 @@ struct TimelinePhaseRow: View {
             Text(discovery.tag.localizedName)
                 .cbTypography(.subhead2)
                 .foregroundStyle(CBColor.blue5)
+
+            if let title = discovery.title, !title.isEmpty {
+                Text(verbatim: title)
+                    .cbTypography(.subhead2)
+                    .foregroundStyle(CBColor.gray8)
+            }
 
             Text(verbatim: discovery.content)
                 .cbTypography(.body2)

@@ -2,23 +2,20 @@ import Foundation
 
 enum TimelineEndpoint: Endpoint {
     case timeline(tripID: Int)
-    case essentialInfo(countryCode: String)
     case updateChecklistItem(id: Int, isChecked: Bool)
 
     var path: String {
         switch self {
         case let .timeline(tripID):
-            "/api/trips/\(tripID)/timeline"
-        case let .essentialInfo(countryCode):
-            "/api/countries/\(countryCode)/essential-info"
+            "/trips/\(tripID)/timeline"
         case let .updateChecklistItem(id, _):
-            "/api/checklist-items/\(id)"
+            "/checklist-items/\(id)"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .timeline, .essentialInfo:
+        case .timeline:
             .get
         case .updateChecklistItem:
             .patch
