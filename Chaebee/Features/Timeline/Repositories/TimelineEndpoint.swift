@@ -8,11 +8,11 @@ enum TimelineEndpoint: Endpoint {
     var path: String {
         switch self {
         case let .timeline(tripID):
-            "/api/trips/\(tripID)/timeline"
+            "/trips/\(tripID)/timeline"
         case let .essentialInfo(countryCode):
-            "/api/countries/\(countryCode)/essential-info"
+            "/countries/\(countryCode)/essential-info"
         case let .updateChecklistItem(id, _):
-            "/api/checklist-items/\(id)"
+            "/checklist-items/\(id)"
         }
     }
 

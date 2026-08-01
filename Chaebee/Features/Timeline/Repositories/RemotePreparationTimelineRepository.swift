@@ -27,7 +27,7 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
     }
 
     func updateChecklistItem(id: Int, isChecked: Bool) async throws {
-        _ = try await client.request(
+        let _: APIResponseDTO<EmptyResponseDTO?> = try await client.request(
             TimelineEndpoint.updateChecklistItem(id: id, isChecked: isChecked),
             as: APIResponseDTO<EmptyResponseDTO?>.self
         )
@@ -119,5 +119,3 @@ struct RemotePreparationTimelineRepository: PreparationTimelineRepository {
         return date.formatted(.dateTime.year().month().day())
     }
 }
-
-private struct EmptyResponseDTO: Decodable {}

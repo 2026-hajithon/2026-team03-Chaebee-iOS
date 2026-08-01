@@ -35,7 +35,7 @@ struct DefaultAPIClient: APIClient {
             throw APIError.invalidResponse
         }
         guard 200..<300 ~= httpResponse.statusCode else {
-            if let payload = try? JSONDecoder().decode(ServerErrorResponse.self, from: data) {
+            if let payload = try? makeJSONDecoder().decode(ServerErrorResponse.self, from: data) {
                 throw APIError.server(
                     status: httpResponse.statusCode,
                     code: payload.code,
@@ -45,8 +45,15 @@ struct DefaultAPIClient: APIClient {
             throw APIError.invalidStatusCode(httpResponse.statusCode)
         }
 
+        if data.isEmpty {
+            guard let emptyResponse = EmptyResponseDTO() as? Response else {
+                throw APIError.emptyResponse
+            }
+            return emptyResponse
+        }
+
         do {
-            return try JSONDecoder().decode(type, from: data)
+            return try makeJSONDecoder().decode(type, from: data)
         } catch {
             throw APIError.decodingFailed(error)
         }
@@ -69,12 +76,24 @@ struct DefaultAPIClient: APIClient {
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
         request.httpBody = endpoint.body
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if endpoint.body != nil {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
         endpoint.headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
 
-        if let accessToken = await accessTokenProvider(), !accessToken.isEmpty {
+        if endpoint.requiresAuthentication,
+           let accessToken = await accessTokenProvider(),
+           !accessToken.isEmpty {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         }
         return request
+    }
+
+    private func makeJSONDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
     }
 }
 

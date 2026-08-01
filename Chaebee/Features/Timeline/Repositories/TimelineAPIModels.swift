@@ -1,12 +1,5 @@
 import Foundation
 
-struct APIResponseDTO<Payload: Decodable>: Decodable {
-    let status: Int
-    let success: Bool
-    let message: String
-    let data: Payload
-}
-
 struct TimelineResponseDTO: Decodable {
     let tripID: Int
     let progress: TimelineProgressDTO
@@ -73,6 +66,6 @@ struct EssentialInfoResponseDTO: Decodable {
     }
 }
 
-struct ChecklistUpdateRequestDTO: Encodable {
+struct ChecklistUpdateRequestDTO: Encodable, Sendable {
     let isChecked: Bool
 }
