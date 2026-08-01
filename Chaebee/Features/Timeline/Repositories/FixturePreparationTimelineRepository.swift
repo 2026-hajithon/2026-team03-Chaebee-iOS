@@ -9,25 +9,66 @@ struct FixturePreparationTimelineRepository: PreparationTimelineRepository {
     }
 
     let destination: Destination
+    let includesESIMPreparation: Bool
+    let includesExchangePreparation: Bool
 
-    init(destination: Destination = .singapore) {
+    init(
+        destination: Destination = .singapore,
+        includesESIMPreparation: Bool = true,
+        includesExchangePreparation: Bool = true
+    ) {
         self.destination = destination
+        self.includesESIMPreparation = includesESIMPreparation
+        self.includesExchangePreparation = includesExchangePreparation
     }
 
     func fetchTimeline(tripID: Int) async throws -> PreparationTimeline {
+        let timeline: PreparationTimeline
+
         switch destination {
         case .losAngeles:
-            return makeUSATimeline(tripID: tripID, destinationName: "로스앤젤레스, 미국")
+            timeline = makeUSATimeline(tripID: tripID, destinationName: "로스앤젤레스, 미국")
         case .newYork:
-            return makeUSATimeline(tripID: tripID, destinationName: "뉴욕, 미국")
+            timeline = makeUSATimeline(tripID: tripID, destinationName: "뉴욕, 미국")
         case .singapore:
-            return makeSingaporeTimeline(tripID: tripID)
+            timeline = makeSingaporeTimeline(tripID: tripID)
         case .taiwan:
-            return makeTaiwanTimeline(tripID: tripID)
+            timeline = makeTaiwanTimeline(tripID: tripID)
         }
+
+        return applyingRegistrationPlans(to: timeline)
     }
 
     func updateChecklistItem(id: Int, isChecked: Bool) async throws {}
+
+    private func applyingRegistrationPlans(
+        to timeline: PreparationTimeline
+    ) -> PreparationTimeline {
+        let excludedTags = Set(
+            [
+                includesESIMPreparation ? nil : PreparationTag.esimRoaming,
+                includesExchangePreparation ? nil : PreparationTag.exchange
+            ].compactMap { $0 }
+        )
+        guard !excludedTags.isEmpty else { return timeline }
+
+        var filteredTimeline = timeline
+        let removedItems = timeline.phases
+            .flatMap(\.checklistItems)
+            .filter { excludedTags.contains($0.tag) }
+
+        filteredTimeline.phases = timeline.phases.map { phase in
+            var filteredPhase = phase
+            filteredPhase.checklistItems.removeAll { excludedTags.contains($0.tag) }
+            return filteredPhase
+        }
+        filteredTimeline.progress.total = max(0, timeline.progress.total - removedItems.count)
+        filteredTimeline.progress.done = max(
+            0,
+            timeline.progress.done - removedItems.filter(\.isChecked).count
+        )
+        return filteredTimeline
+    }
 
     private func makeUSATimeline(
         tripID: Int,

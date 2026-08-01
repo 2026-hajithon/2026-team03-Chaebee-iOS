@@ -13,7 +13,7 @@ struct PreparationTimeline: Equatable, Identifiable, Sendable {
 
 struct TimelineProgress: Equatable, Sendable {
     var done: Int
-    let total: Int
+    var total: Int
 
     var percent: Int {
         guard total > 0 else { return 0 }

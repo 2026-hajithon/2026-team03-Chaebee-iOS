@@ -31,6 +31,9 @@ struct TimelineSummaryCards: View {
                     .foregroundStyle(CBColor.gray6)
             }
             .frame(width: 48, height: 48)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("timeline.progress.accessibilityLabel"))
+            .accessibilityValue(Text(verbatim: "\(progress.done)/\(progress.total)"))
 
             Text("timeline.progress.almostDone")
                 .cbTypography(.subhead2)
@@ -75,6 +78,6 @@ struct TimelineSummaryCards: View {
 
     private var progressFraction: CGFloat {
         guard progress.total > 0 else { return 0 }
-        return CGFloat(progress.done) / CGFloat(progress.total)
+        return min(max(CGFloat(progress.done) / CGFloat(progress.total), 0), 1)
     }
 }

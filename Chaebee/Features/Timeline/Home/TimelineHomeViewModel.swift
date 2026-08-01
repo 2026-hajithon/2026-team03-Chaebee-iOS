@@ -9,6 +9,7 @@ final class TimelineHomeViewModel: ObservableObject {
 
     private let tripID: Int
     private let repository: any PreparationTimelineRepository
+    private var updatingItemIDs: Set<Int> = []
 
     init(
         tripID: Int,
@@ -39,6 +40,7 @@ final class TimelineHomeViewModel: ObservableObject {
 
     func toggleChecklistItem(id: Int) {
         guard
+            !updatingItemIDs.contains(id),
             var updatedTimeline = timeline,
             let phaseIndex = updatedTimeline.phases.firstIndex(where: { phase in
                 phase.checklistItems.contains(where: { $0.id == id })
@@ -48,6 +50,7 @@ final class TimelineHomeViewModel: ObservableObject {
             )
         else { return }
 
+        updatingItemIDs.insert(id)
         let previousValue = updatedTimeline.phases[phaseIndex].checklistItems[itemIndex].isChecked
         let newValue = !previousValue
         updatedTimeline.phases[phaseIndex].checklistItems[itemIndex].isChecked = newValue
@@ -55,6 +58,7 @@ final class TimelineHomeViewModel: ObservableObject {
         timeline = updatedTimeline
 
         Task {
+            defer { updatingItemIDs.remove(id) }
             do {
                 try await repository.updateChecklistItem(id: id, isChecked: newValue)
             } catch {

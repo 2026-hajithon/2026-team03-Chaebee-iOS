@@ -111,6 +111,10 @@ struct TimelinePhaseRow: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(Text(verbatim: item.title))
+            .accessibilityValue(
+                Text(item.isChecked ? "common.checked" : "common.unchecked")
+            )
 
             if let actionTitle = item.actionTitle, let actionURL = item.actionURL {
                 Link(destination: actionURL) {
@@ -122,6 +126,7 @@ struct TimelinePhaseRow: View {
                         .background(CBColor.blue5)
                         .clipShape(Capsule())
                 }
+                .accessibilityLabel(Text(verbatim: "\(item.title), \(actionTitle)"))
             }
         }
         .padding(CBSpacing.small)

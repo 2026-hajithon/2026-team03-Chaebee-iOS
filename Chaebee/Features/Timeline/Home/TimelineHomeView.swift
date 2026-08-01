@@ -58,12 +58,22 @@ struct TimelineHomeView: View {
                     .padding(.bottom, CBSpacing.medium)
 
                 VStack(spacing: 0) {
-                    ForEach(Array(timeline.phases.enumerated()), id: \.element.id) { index, phase in
-                        TimelinePhaseRow(
-                            phase: phase,
-                            showsTrailingLine: index < timeline.phases.count - 1,
-                            onToggle: viewModel.toggleChecklistItem
-                        )
+                    if timeline.phases.isEmpty {
+                        Text("timeline.empty.title")
+                            .cbTypography(.body2)
+                            .foregroundStyle(CBColor.gray6)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, CBSpacing.xLarge)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: CBRadius.medium))
+                    } else {
+                        ForEach(Array(timeline.phases.enumerated()), id: \.element.id) { index, phase in
+                            TimelinePhaseRow(
+                                phase: phase,
+                                showsTrailingLine: index < timeline.phases.count - 1,
+                                onToggle: viewModel.toggleChecklistItem
+                            )
+                        }
                     }
                 }
 
