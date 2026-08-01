@@ -2,15 +2,12 @@ import SwiftUI
 
 struct TravelerDiscoveryCard: View {
     let discovery: TravelerDiscovery
+    var avatarData: Data?
 
     var body: some View {
         VStack(alignment: .leading, spacing: CBSpacing.medium) {
             HStack(spacing: CBSpacing.small) {
-                Image(discovery.authorAvatar.imageResource)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 36, height: 36)
-                    .clipShape(Circle())
+                discoveryAvatar
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: discovery.authorName)
@@ -47,6 +44,23 @@ struct TravelerDiscoveryCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: CBRadius.large))
+    }
+
+    @ViewBuilder
+    private var discoveryAvatar: some View {
+        if let avatarData, let image = UIImage(data: avatarData) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 36, height: 36)
+                .clipShape(Circle())
+        } else {
+            Image(discovery.authorAvatar.imageResource)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 36, height: 36)
+                .clipShape(Circle())
+        }
     }
 }
 

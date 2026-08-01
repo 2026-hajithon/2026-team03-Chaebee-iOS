@@ -6,12 +6,19 @@ final class WriteExperienceHomeViewModel: ObservableObject {
     @Published private(set) var discoveries: [TravelerDiscovery] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
+    @Published private(set) var currentUserAvatarData: Data?
 
     private let repository: any WriteExperienceHomeRepository
+    private let profileRepository: ProfileRepository
     private let sort: ExperienceFeedSort = .latest
 
-    init(repository: any WriteExperienceHomeRepository) {
+    init(
+        repository: any WriteExperienceHomeRepository,
+        profileRepository: ProfileRepository? = nil
+    ) {
         self.repository = repository
+        self.profileRepository = profileRepository ?? LocalProfileRepository()
+        currentUserAvatarData = self.profileRepository.fetchProfile().avatarData
     }
 
     func load() async {
@@ -34,9 +41,15 @@ final class WriteExperienceHomeViewModel: ObservableObject {
     }
 
     func register(_ request: WriteExperienceRequest) {
+        currentUserAvatarData = profileRepository.fetchProfile().avatarData
+
         let newDiscoveries = repository.registerDiscovery(
             request: request
         )
         discoveries.insert(contentsOf: newDiscoveries, at: 0)
+    }
+
+    func avatarData(for discovery: TravelerDiscovery) -> Data? {
+        discovery.id < 0 ? currentUserAvatarData : nil
     }
 }
