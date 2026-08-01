@@ -30,8 +30,13 @@ struct WriteExperienceHomeView: View {
         .task {
             await viewModel.load()
         }
-        .navigationDestination(isPresented: $showsWriteExperience) {
-            WriteExperienceInputView()
+        .fullScreenCover(isPresented: $showsWriteExperience) {
+            NavigationStack {
+                WriteExperienceInputView { request in
+                    viewModel.register(request)
+                    showsWriteExperience = false
+                }
+            }
         }
     }
 
@@ -68,21 +73,21 @@ struct WriteExperienceHomeView: View {
             HStack(alignment: .center, spacing: CBSpacing.medium) {
                 VStack(alignment: .leading, spacing: CBSpacing.small) {
                     Text("writeExperience.home.hero.eyebrow")
-                        .cbTypography(.subhead4)
+                        .cbTypography(.subhead3)
                         .foregroundStyle(CBColor.gray6)
 
                     Text("writeExperience.home.hero.title")
-                        .cbTypography(.head4)
+                        .cbTypography(.head3)
                         .foregroundStyle(CBColor.blue5)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 Image(.destination)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 104, height: 104)
+                    .frame(width: 112, height: 112)
+                    .accessibilityHidden(true)
             }
 
             CBButton("writeExperience.home.hero.button") {
