@@ -4,6 +4,8 @@ import SwiftUI
 import UIKit
 
 struct ProfileSettingsView: View {
+    @AppStorage("chaebee.hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("chaebee.isLoggedIn") private var isLoggedIn = false
     @StateObject private var viewModel: ProfileSettingsViewModel
     @State private var isPhotoActionsPresented = false
     @State private var selectedPhoto: PhotosPickerItem?
@@ -70,7 +72,10 @@ struct ProfileSettingsView: View {
                 Alert(
                     title: Text("profile.logout.confirm.title"),
                     message: Text("profile.logout.confirm.message"),
-                    primaryButton: .destructive(Text("profile.logout")) {},
+                    primaryButton: .destructive(Text("profile.logout")) {
+                        isLoggedIn = false
+                        hasCompletedOnboarding = false
+                    },
                     secondaryButton: .cancel(Text("common.cancel"))
                 )
             case .withdraw:
