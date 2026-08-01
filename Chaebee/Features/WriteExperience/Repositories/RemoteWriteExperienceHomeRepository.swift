@@ -71,6 +71,10 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         guard let country = ExperienceCountry(backendCode: response.countryCode) else {
             return []
         }
+        let authorName = resolvedAuthorName(
+            serverAuthorName: response.authorName,
+            isCurrentUser: isCurrentUser
+        )
 
         let subDiscoveries: [SubDiscoveryResponseDTO]
         if let values = response.subDiscoveries {
@@ -92,7 +96,7 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
             return [
                 makeTravelerDiscovery(
                     id: response.discoveryID,
-                    authorName: response.authorName,
+                    authorName: authorName,
                     createdAt: response.createdAt,
                     country: country,
                     tag: response.tag ?? mockDetails.tag.rawValue,
@@ -105,7 +109,7 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         return subDiscoveries.map { subDiscovery in
             makeTravelerDiscovery(
                 id: subDiscovery.subDiscoveryID,
-                authorName: response.authorName,
+                authorName: authorName,
                 createdAt: response.createdAt,
                 country: country,
                 tag: subDiscovery.tag,
@@ -163,6 +167,17 @@ struct RemoteWriteExperienceHomeRepository: WriteExperienceHomeRepository {
         }
         let avatars = ExperienceAvatar.allCases
         return avatars[Int(stableHash % UInt64(avatars.count))]
+    }
+
+    private func resolvedAuthorName(
+        serverAuthorName: String,
+        isCurrentUser: Bool
+    ) -> String {
+        guard isCurrentUser else { return serverAuthorName }
+
+        let nickname = profileRepository.fetchProfile().nickname
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return nickname.isEmpty ? serverAuthorName : nickname
     }
 
     private func mockDetails(
