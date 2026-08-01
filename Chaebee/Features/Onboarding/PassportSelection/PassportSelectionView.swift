@@ -43,6 +43,7 @@ struct PassportSelectionView: View {
                         .frame(height: 28)
                 }
                 .buttonStyle(.plain)
+                .padding(.bottom, CBSpacing.medium)
 
                 VStack(spacing: CBSpacing.small) {
                     OnboardingChoiceButton(
