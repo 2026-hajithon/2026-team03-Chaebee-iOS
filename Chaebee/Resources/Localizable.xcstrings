@@ -718,6 +718,144 @@
         }
       }
     },
+    "preparationTag.accommodationCheckin" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Accommodation check-in" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#숙소 체크인" } }
+      }
+    },
+    "preparationTag.adapter" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Adapter" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#어댑터 준비" } }
+      }
+    },
+    "preparationTag.entryForm" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Entry form" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#입국 신고서" } }
+      }
+    },
+    "preparationTag.esimRoaming" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#eSIM and roaming" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#eSIM·로밍" } }
+      }
+    },
+    "preparationTag.exchange" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Currency exchange" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#환전" } }
+      }
+    },
+    "preparationTag.flightBoarding" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Flight boarding" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#비행기 탑승" } }
+      }
+    },
+    "preparationTag.insurance" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Travel insurance" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#보험 가입" } }
+      }
+    },
+    "preparationTag.localAirport" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Local airport" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#현지 공항" } }
+      }
+    },
+    "preparationTag.passport" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Passport" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#여권 준비" } }
+      }
+    },
+    "preparationTag.transitCard" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Transit card" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#교통카드 준비" } }
+      }
+    },
+    "preparationTag.vaccination" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Vaccination" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#예방접종" } }
+      }
+    },
+    "preparationTag.visa" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "#Visa and travel authorization" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "#비자·여행허가" } }
+      }
+    },
+    "timeline.error.retry" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try again" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "다시 시도" } }
+      }
+    },
+    "timeline.error.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Couldn’t load the timeline." } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "타임라인을 불러오지 못했어요" } }
+      }
+    },
+    "timeline.essentialInfo.disclaimer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This information is for reference. Check the latest guidance from the relevant authority before traveling." } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "위 내용은 참고용 안내예요. 중요한 사항은 반드시 관련 기관의 최신 안내를 다시 확인해 주세요." } }
+      }
+    },
+    "timeline.essentialInfo.lastUpdated" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last updated" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "최종 업데이트" } }
+      }
+    },
+    "timeline.essentialInfo.officialSite" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Official website" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "공식 사이트" } }
+      }
+    },
+    "timeline.essentialInfo.passportValidity" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Passport validity" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "여권 유효기간" } }
+      }
+    },
+    "timeline.essentialInfo.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Essential information" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "필수 정보" } }
+      }
+    },
+    "timeline.essentialInfo.visaFreeStay" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Visa-free stay" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "무비자 체류기간" } }
+      }
+    },
+    "timeline.progress.almostDone" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Almost ready" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "거의 다 됐어요" } }
+      }
+    },
+    "timeline.progress.percent" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d%% complete" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "총 %d%% 완료했어요" } }
+      }
+    },
+    "timeline.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Timeline" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "타임라인" } }
+      }
+    },
     "Welcome" : {
       "comment" : "A welcome message.",
       "isCommentAutoGenerated" : true
